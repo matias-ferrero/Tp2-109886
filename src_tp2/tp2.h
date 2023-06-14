@@ -1,49 +1,43 @@
-#ifndef PILA_H_
-#define PILA_H_
+#ifndef TP2_H_
+#define TP2_H_
+
+#include "src/tp1.h"
+#include "src/hash.h"
+#include "src/lista.h"
+#include "src/pokemon.h"
+
+#include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
-typedef struct _pila_t pila_t;
+typedef struct opciones opciones_t;
+
+typedef struct menu menu_t;
+
 
 /**
- * Crea una pila vacía y la devuelve.
+ * 
+ */
+menu_t *crear_menu();
+
+/**
  *
- * En caso de error devuelve NULL
  */
-pila_t *pila_crear();
+void agregar_operacion();
 
 /**
- * Apila un elemento en la pila.
  *
- * Devuelve la pila o NULL en caso de error.
  */
-pila_t *pila_apilar(pila_t *pila, void *elemento);
+size_t cantidad_operaciones(opciones_t *opciones);
 
 /**
- * Desapila un elemento de la pila y lo devuelve.
- *
- * Devuelve NULL en caso de error.
+ * 
  */
-void *pila_desapilar(pila_t *pila);
+void mostrar_menu(menu_t *menu);
 
 /**
- * Devuelve el elemento en el tope de la pila o NULL en caso de que no exista.
+ * 
  */
-void *pila_tope(pila_t *pila);
-
-/**
- * Devuelve la cantidad de elementos de la pila o 0 si no existe.
- */
-size_t pila_tamanio(pila_t *pila);
-
-/**
- * Devuelve true si la pila tiene 0 elementos.
- */
-bool pila_vacia(pila_t *pila);
-
-/**
- * Libera la memoria reservada por la pila.
- */
-void pila_destruir(pila_t *pila);
+void destruir_menu(menu_t *menu);
 
 #endif // PILA_H_
