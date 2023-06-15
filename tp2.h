@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef struct opciones opciones_t;
+typedef struct operacion operacion_t;
 
 typedef struct menu menu_t;
 
@@ -23,12 +23,12 @@ menu_t *crear_menu();
 /**
  *
  */
-void agregar_operacion();
+menu_t *agregar_operacion(menu_t *menu, char *clave, char *texto, void (*funcion)(void*, void *));
 
 /**
  *
  */
-size_t cantidad_operaciones(opciones_t *opciones);
+size_t cantidad_operaciones(menu_t *menu);
 
 /**
  * 

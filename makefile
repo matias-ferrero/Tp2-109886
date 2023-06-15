@@ -11,8 +11,19 @@ pruebas_chanutron: src/*.c pruebas_chanutron.c
 	$(CC) $(CFLAGS) src/*.c pruebas_chanutron.c -o pruebas_chanutron
 
 
-ejemplo: src/*.c tp2.c
-	$(CC) $(CFLAGS) src/*.c tp2.c -o tp2
+valgrind-alumno: pruebas_alumno
+	valgrind $(VALGRIND_FLAGS) ./pruebas_alumno
+
+pruebas_alumno: src/*.c pruebas_alumno.c
+	$(CC) $(CFLAGS) src/*.c pruebas_alumno.c -o pruebas_alumno
+
+
+valgrind-ejemplo: ejemplo
+	valgrind $(VALGRIND_FLAGS) ./ejemplo
+
+ejemplo: src/*.c ejemplo.c
+	$(CC) $(CFLAGS) src/*.c ejemplo.c -o ejemplo
+
 
 clean:
 	rm -f pruebas_alumno pruebas_chanutron tp2

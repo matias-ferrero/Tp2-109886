@@ -1,9 +1,4 @@
 #include "pa2m.h"
-#include "src/tp1.h"
-#include "src/hash.h"
-#include "src/lista.h"
-#include "src/pokemon.h"
-#include "src/pokemon_privado.h"
 
 #include "src_tp2/tp2.h"
 
