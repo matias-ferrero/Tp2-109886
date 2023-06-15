@@ -26,4 +26,4 @@ ejemplo: src/*.c ejemplo.c
 
 
 clean:
-	rm -f pruebas_alumno pruebas_chanutron tp2
+	rm -f pruebas_alumno pruebas_chanutron ejemplo
