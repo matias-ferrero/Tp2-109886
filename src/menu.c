@@ -1,4 +1,5 @@
 #include "menu.h"
+#include <ctype.h>
 
 #define CAPACIDAD_MENU 15
 
@@ -41,6 +42,11 @@ opcion_t *crear_opcion(char *texto, menu_operacion_t funcion)
 menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 		     menu_operacion_t funcion)
 {
+	if (!menu || !clave || !texto)
+		return NULL;
+
+	*clave = (char)toupper(*clave);
+
 	opcion_t *opcion = crear_opcion(texto, funcion);
 	if (!opcion)
 		return NULL;
@@ -52,6 +58,39 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 	return menu;
 }
 
+bool buscar_operacion_similar(const char *clave, void *op, void *aux)
+{
+	op = op;
+	char *palabra_clave = aux;
+	if (!strcmp(clave, &palabra_clave[0])) {
+		printf("Quisiste decir: %c?", *clave);
+		return false;
+	}
+	return true;
+}
+
+bool menu_buscar(menu_t *menu, char *clave)
+{
+	if (!menu || !clave || !menu_cantidad_opciones(menu))
+		return false;
+
+	for (int i = 0;  i < strlen(clave); i++)
+		clave[i] = (char)toupper(clave[i]);
+
+	if (!strcmp(clave, "AYUDA"))
+		return true;
+
+	if (strcmp(clave, "EXIT"))
+		return true;
+
+	if (hash_contiene(menu->opciones, &clave[0]))
+		return true;
+
+	printf("No se encontro la operacion que pediste\n");
+	hash_con_cada_clave(menu->opciones, buscar_operacion_similar, clave);
+	return false;
+}
+
 size_t menu_cantidad_opciones(menu_t *menu)
 {
 	if (!menu)
@@ -60,20 +99,20 @@ size_t menu_cantidad_opciones(menu_t *menu)
 	return menu->cantidad;
 }
 
-bool mostrar_opcion(const char *clave, void *op, void *aux)	//REVISAR: CUANDO DEVUELVE FALSE
+bool mostrar_opcion(const char *clave, void *op, void *aux)
 {
 	aux = aux;
 	if (!clave)
 		return false;
 
 	opcion_t *opcion = op;
-	printf("%s: %s\n", clave, opcion->informacion);
+	printf("%c: %s\n", *clave, opcion->informacion);
 	return true;
 }
 
 void menu_mostrar(menu_t *menu)
 {
-	if (!menu)
+	if (!menu || !menu_cantidad_opciones(menu))
 		return;
 
 	size_t mostrados = hash_con_cada_clave(menu->opciones,

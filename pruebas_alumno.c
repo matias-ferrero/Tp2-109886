@@ -24,13 +24,67 @@ void pruebas_de_creacion_y_destruccion_del_menu()
 void pruebas_agregar_y_destruir()
 {
 	menu_t *menu = menu_crear();
-	char clave = 'C';
+	char clave1 = 'A';
+	char clave2 = 'b';
+	char clave3[] = "clAvE";
 	char texto[MAX_TEXTO] = "Texto de prueba";
-	pa2m_afirmar(menu_agregar(menu, &clave, texto, funcion) != NULL,
+
+	pa2m_afirmar(menu_agregar(menu, &clave1, texto, funcion) != NULL,
 		     "Se pueden agregar operaciones al menu");
 
-	pa2m_afirmar(menu_cantidad_opciones(menu) == 1,
-		     "Se agrega 1 operacion y hay 1 operacion en el menu");
+	pa2m_afirmar(menu_agregar(menu, &clave2, texto, funcion) != NULL,
+		     "Se puede agregar una operacion con clave no mayuscula");
+
+	pa2m_afirmar(menu_agregar(menu, clave3, texto, funcion) != NULL,
+		     "Se puede agregar una operacion con una palabra como clave");
+
+	pa2m_afirmar(menu_cantidad_opciones(menu) == 3,
+		     "Se agregaron 3 operaciones y la cantidad de operaciones es 3");
+
+	menu_destruir(menu);
+}
+
+void pruebas_buscar_operaciones_por_clave()
+{
+	menu_t *menu = menu_crear();
+	char clave1 = 'A';
+	char clave2 = 'b';
+	char clave3[] = "clAvE";
+	char texto[MAX_TEXTO] = "Texto de prueba";
+
+	pa2m_afirmar(!menu_buscar(menu, &clave1),
+		     "No se pueden encontrar operaciones en un menu vacio");
+
+	menu_agregar(menu, &clave1, texto, funcion);
+	menu_agregar(menu, &clave2, texto, funcion);
+	menu_agregar(menu, clave3, texto, funcion);
+
+	pa2m_afirmar(menu_buscar(menu, &clave1),
+		     "Se puede encontrar una operacion en el menu");
+
+	pa2m_afirmar(menu_buscar(menu, &clave2),
+		     "Se puede encontrar otra operacion en el menu");
+
+	pa2m_afirmar(menu_buscar(menu, &clave3[0]),
+		     "Se puede encontrar la ultima operacion");
+
+	
+	menu_destruir(menu);
+}
+
+void pruebas_mostrar_operaciones_del_menu()
+{
+	menu_t *menu = menu_crear();
+	char clave1 = 'A';
+	char clave2 = 'b';
+	char clave3[] = "clAvE";
+	char texto[MAX_TEXTO] = "Texto de prueba";
+
+	menu_agregar(menu, &clave1, texto, funcion);
+	menu_agregar(menu, &clave2, texto, funcion);
+	menu_agregar(menu, clave3, texto, funcion);
+
+	menu_mostrar(menu);
 
 	menu_destruir(menu);
 }
@@ -42,6 +96,12 @@ void pruebas_de_operaciones_del_tda_menu()
 
 	pa2m_nuevo_grupo("PRUEBAS DE AGREGAR OPERACION Y DESTRUIR MENU");
 	pruebas_agregar_y_destruir();
+
+	pa2m_nuevo_grupo("PRUEBAS DE BUSCAR OPERACIONES DEL MENU");
+	pruebas_buscar_operaciones_por_clave();
+
+	pa2m_nuevo_grupo("PRUEBAS DE MOSTRAR LAS OPERACIONES DEL MENU");
+	pruebas_mostrar_operaciones_del_menu();
 
 }
 

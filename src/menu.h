@@ -33,6 +33,11 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto, menu_operacion_t fu
 /**
  *
  */
+bool menu_buscar(menu_t *menu, char *clave);
+
+/**
+ *
+ */
 size_t menu_cantidad_opciones(menu_t *menu);
 
 /**
