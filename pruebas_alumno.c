@@ -65,7 +65,7 @@ void pruebas_buscar_operaciones_por_clave()
 	pa2m_afirmar(menu_buscar(menu, &clave2),
 		     "Se puede encontrar otra operacion en el menu");
 
-	pa2m_afirmar(menu_buscar(menu, &clave3[0]),
+	pa2m_afirmar(menu_buscar(menu, clave3),
 		     "Se puede encontrar la ultima operacion");
 
 	

@@ -31,9 +31,9 @@ menu_t *menu_crear();
 menu_t *menu_agregar(menu_t *menu, char *clave, char *texto, menu_operacion_t funcion);
 
 /**
- *
+ * 
  */
-bool menu_buscar(menu_t *menu, char *clave);
+opcion_t *menu_obtener(menu_t *menu, char *clave);
 
 /**
  *

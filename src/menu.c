@@ -46,12 +46,16 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 		return NULL;
 
 	*clave = (char)toupper(*clave);
+	if (hash_contiene(menu->opciones, &clave[0])) {
+		printf("Operacion ya existente\n");
+		return NULL;
+	}
 
 	opcion_t *opcion = crear_opcion(texto, funcion);
 	if (!opcion)
 		return NULL;
 
-	if (!hash_insertar(menu->opciones, clave, opcion, NULL))
+	if (!hash_insertar(menu->opciones, &clave[0], opcion, NULL))
 		return NULL;
 
 	menu->cantidad = hash_cantidad(menu->opciones);
@@ -69,26 +73,62 @@ bool buscar_operacion_similar(const char *clave, void *op, void *aux)
 	return true;
 }
 
-bool menu_buscar(menu_t *menu, char *clave)
+ void buscar_operacion(menu_t *menu, char *clave)
+{
+	if (!strcmp(clave, "SALIR") || (!strcmp(clave, "EXIT"))) {
+		char letra = 'S';
+		memcpy(clave, &letra, 1);
+	}
+
+	if (!strcmp(clave, "AYUDA") || (!strcmp(clave, "HELP"))) {
+		char letra = 'H';
+		memcpy(clave, &letra, 1);
+	}
+
+	if (!strcmp(clave, "CARGAR")) {
+		char letra = 'C';
+		memcpy(clave, &letra, 1);
+	}
+
+	if (!strcmp(clave, "ESTADO")) {
+		char letra = 'E';
+		memcpy(clave, &letra, 1);
+	}
+
+	if (!strcmp(clave, "MOSTRAR")) {
+		char letra = 'M';
+		memcpy(clave, &letra, 1);
+	}
+
+	if (!strcmp(clave, "LISTAR")) {
+		char letra = 'L';
+		memcpy(clave, &letra, 1);
+	}
+	
+	if (!strcmp(clave, "DESTRUIR")) {
+		char letra = 'D';
+		memcpy(clave, &letra, 1);
+	}
+
+}
+
+opcion_t *menu_obtener(menu_t *menu, char *clave)
 {
 	if (!menu || !clave || !menu_cantidad_opciones(menu))
-		return false;
+		return NULL;
 
 	for (int i = 0;  i < strlen(clave); i++)
 		clave[i] = (char)toupper(clave[i]);
 
-	if (!strcmp(clave, "AYUDA"))
-		return true;
+	buscar_operacion(menu, clave);
 
-	if (strcmp(clave, "EXIT"))
-		return true;
-
-	if (hash_contiene(menu->opciones, &clave[0]))
-		return true;
-
-	printf("No se encontro la operacion que pediste\n");
-	hash_con_cada_clave(menu->opciones, buscar_operacion_similar, clave);
-	return false;
+	opcion_t *opcion = hash_obtener(menu->opciones, clave);
+	if (!opcion) {
+		printf("No se encontro la operacion que pediste\n");
+		hash_con_cada_clave(menu->opciones, buscar_operacion_similar,
+				    clave);
+	}
+	return opcion;
 }
 
 size_t menu_cantidad_opciones(menu_t *menu)
@@ -106,7 +146,7 @@ bool mostrar_opcion(const char *clave, void *op, void *aux)
 		return false;
 
 	opcion_t *opcion = op;
-	printf("%c: %s\n", *clave, opcion->informacion);
+	printf("%s: %s\n", clave, opcion->informacion);
 	return true;
 }
 
