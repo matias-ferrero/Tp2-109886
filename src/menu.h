@@ -23,17 +23,18 @@ typedef struct menu menu_t;
 /**
  * 
  */
-menu_t *menu_crear();
+menu_t *menu_crear(void *contenido);
 
 /**
  *
  */
-menu_t *menu_agregar(menu_t *menu, char *clave, char *texto, menu_operacion_t funcion);
+menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
+ 		     menu_operacion_t funcion);
 
 /**
  * 
  */
-opcion_t *menu_obtener(menu_t *menu, char *clave);
+opcion_t *menu_obtener_operacion(menu_t *menu, char *clave);
 
 /**
  *
@@ -48,6 +49,22 @@ void menu_mostrar(menu_t *menu);
 /**
  * 
  */
+void *menu_obtener_contenido(menu_t *menu);
+
+/**
+ * 
+ */
+void *menu_cambiar_contenido(menu_t *menu, void *nuevo,
+			     void (*f)(void *));
+
+/**
+ * 
+ */
 void menu_destruir(menu_t *menu);
+
+/**
+ * 
+ */
+void menu_destruir_todo(menu_t *menu, void (*f)(void *));
 
 #endif // PILA_H_

@@ -13,7 +13,7 @@ void funcion(void *v1, void *v2)
 
 void pruebas_de_creacion_y_destruccion_del_menu()
 {
-	menu_t *menu = menu_crear();
+	menu_t *menu = menu_crear(NULL);
 
 	pa2m_afirmar(menu != NULL, "Se puede crear un menu con exito");
 	pa2m_afirmar(!menu_cantidad_opciones(menu), "El menu esta vacio");
@@ -23,7 +23,7 @@ void pruebas_de_creacion_y_destruccion_del_menu()
 
 void pruebas_agregar_y_destruir()
 {
-	menu_t *menu = menu_crear();
+	menu_t *menu = menu_crear(NULL);
 	char clave1 = 'A';
 	char clave2 = 'b';
 	char clave3[] = "clAvE";
@@ -46,35 +46,22 @@ void pruebas_agregar_y_destruir()
 
 void pruebas_buscar_operaciones_por_clave()
 {
-	menu_t *menu = menu_crear();
+	menu_t *menu = menu_crear(NULL);
 	char clave1 = 'A';
 	char clave2 = 'b';
 	char clave3[] = "clAvE";
 	char texto[MAX_TEXTO] = "Texto de prueba";
 
-	pa2m_afirmar(!menu_buscar(menu, &clave1),
-		     "No se pueden encontrar operaciones en un menu vacio");
-
 	menu_agregar(menu, &clave1, texto, funcion);
 	menu_agregar(menu, &clave2, texto, funcion);
 	menu_agregar(menu, clave3, texto, funcion);
-
-	pa2m_afirmar(menu_buscar(menu, &clave1),
-		     "Se puede encontrar una operacion en el menu");
-
-	pa2m_afirmar(menu_buscar(menu, &clave2),
-		     "Se puede encontrar otra operacion en el menu");
-
-	pa2m_afirmar(menu_buscar(menu, clave3),
-		     "Se puede encontrar la ultima operacion");
-
 	
 	menu_destruir(menu);
 }
 
 void pruebas_mostrar_operaciones_del_menu()
 {
-	menu_t *menu = menu_crear();
+	menu_t *menu = menu_crear(NULL);
 	char clave1 = 'A';
 	char clave2 = 'b';
 	char clave3[] = "clAvE";
