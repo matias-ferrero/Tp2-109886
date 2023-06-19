@@ -34,12 +34,17 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 /**
  * 
  */
-opcion_t *menu_obtener_operacion(menu_t *menu, char *clave);
+opcion_t *menu_obtener(menu_t *menu, char *clave);
+
+/**
+ * 
+ */
+void menu_ejecutar(menu_t *menu, opcion_t *operacion, void *dato);
 
 /**
  *
  */
-size_t menu_cantidad_opciones(menu_t *menu);
+size_t menu_cantidad(menu_t *menu);
 
 /**
  * 

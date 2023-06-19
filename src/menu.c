@@ -45,7 +45,7 @@ opcion_t *crear_opcion(char *texto, menu_operacion_t funcion)
 menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,	//AGREGAR COMANDOS DE UNA SOLA LETRA
 		     menu_operacion_t funcion)
 {
-	if (!menu || !clave || !texto)
+	if (!menu || !clave || !texto || !funcion)
 		return NULL;
 
 	*clave = (char)toupper(*clave);
@@ -115,9 +115,9 @@ bool buscar_operacion_similar(const char *clave, void *op, void *aux)
 
 }
 
-opcion_t *menu_obtener_operacion(menu_t *menu, char *clave)
+opcion_t *menu_obtener(menu_t *menu, char *clave)
 {
-	if (!menu || !clave || !menu_cantidad_opciones(menu))
+	if (!menu || !clave || !menu_cantidad(menu))
 		return NULL;
 
 	for (int i = 0;  i < strlen(clave); i++)
@@ -134,7 +134,15 @@ opcion_t *menu_obtener_operacion(menu_t *menu, char *clave)
 	return opcion;
 }
 
-size_t menu_cantidad_opciones(menu_t *menu)
+void menu_ejecutar(menu_t *menu, opcion_t *operacion, void *dato)	//RETURN DE LA FUNCION
+{
+	if (!menu || !operacion)
+		return;
+
+	operacion->operacion(menu->contenido, dato);
+}
+
+size_t menu_cantidad(menu_t *menu)
 {
 	if (!menu)
 		return 0;
@@ -155,7 +163,7 @@ bool mostrar_opcion(const char *clave, void *op, void *aux)
 
 void menu_mostrar(menu_t *menu)
 {
-	if (!menu || !menu_cantidad_opciones(menu))
+	if (!menu || !menu_cantidad(menu))
 		return;
 
 	size_t mostrados = hash_con_cada_clave(menu->opciones,
