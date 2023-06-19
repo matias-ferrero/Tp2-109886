@@ -91,9 +91,9 @@ bool mostrar_hospital(void *elemento, void *num)
 	nodo_menu_t *nodo = (nodo_menu_t *)elemento;
 
 	if (nodo->activo)
-		printf("%zu- Hospital N°%zu: Activo", *contador, nodo->id);
+		printf("%zu) Hospital N°%zu: Activo", *contador, nodo->id);
 	else
-		printf("%zu- Hospital N°%zu: No activo", *contador, nodo->id);
+		printf("%zu) Hospital N°%zu: No activo", *contador, nodo->id);
 
 	return true;
 }
@@ -108,14 +108,117 @@ void mostrar_hospitales(menu_t *menu)
 	lista_con_cada_elemento(lista, mostrar_hospital, &contador);
 }
 
+int buscar_posicion_hospital_activo(void *elemento, void *pos)
+{
+	if (!elemento || !pos)
+		return -1;
+
+	size_t *posicion = pos;
+	nodo_menu_t *nodo = (nodo_menu_t *)elemento;
+
+	if (nodo->activo)
+		return 0;
+
+	*(posicion++);
+	return -1;
+}
+
+void destruir_hospital(menu_t *menu)
+{
+	if (!menu)
+		return;
+
+	size_t posicion = 0;
+	lista_t *lista = menu_obtener_contenido(menu);
+	nodo_menu_t *nodo;
+	nodo = lista_buscar_elemento(lista,
+				     buscar_posicion_hospital_activo,
+				     &posicion);
+	if (!nodo)
+		return;
+
+	lista_quitar_de_posicion(lista, posicion);
+}
+
+bool mostrar_pokemon(void *elemento, void *contador)
+{
+	if (!elemento || !contador)
+		return false;
+
+	size_t *numero = contador;
+	*(contador++);
+	pokemon_t *pokemon = (pokemon_t *)elemento;
+	printf("%zu) %s\n", *numero, pokemon_nombre(pokemon));
+	return true;
+}
+
+void mostrar_pokemones(menu_t *menu)
+{
+	size_t id;
+	printf("Ingrese el id del hospital que quiere activar\n");
+	scanf("%zu", &id);
+
+	size_t contador = 0;
+	lista_t *lista = menu_obtener_contenido(menu);
+	nodo_menu_t *nodo = lista_buscar_elemento(lista, comparador, &id);
+	if (!nodo)
+		return;
+
+	hospital_a_cada_pokemon(nodo->hospital, mostrar_pokemon, &contador);
+}
+
+bool mostrar_pokemon_detallado(void *elemento, void *contador)
+{
+	if (!elemento || !contador)
+		return false;
+
+	size_t *numero = contador;
+	*(contador++);
+	pokemon_t *pokemon = (pokemon_t *)elemento;
+	printf("%zu) %s - Id: %zu - Salud: %zu - Entrenador: %zu\n", *numero,
+	       pokemon_nombre(pokemon), pokemon_id(pokemon),
+	       pokemon_salud(pokemon), pokemon_entrenador(pokemon));
+
+	return true;
+}
+
+void mostrar_pokemones_detallados(menu_t *menu)
+{
+	size_t id;
+	printf("Ingrese el id del hospital que quiere activar\n");
+	scanf("%zu", &id);
+
+	size_t contador = 0;
+	lista_t *lista = menu_obtener_contenido(menu);
+	nodo_menu_t *nodo = lista_buscar_elemento(lista, comparador, &id);
+	if (!nodo)
+		return;
+
+	hospital_a_cada_pokemon(nodo->hospital, mostrar_pokemon_detallado, &contador);
+}
+
 void destruir_nodo(void *n)
 {
 	if (!n)
 		return;
 
 	nodo_menu_t *nodo = n;
-	free(nodo->hospital);
+	hospital_destruir(nodo->hospital);
 	free(nodo);
+}
+
+void destruir_menu(menu_t *menu)
+{
+	if (!menu)
+		return;
+
+	menu_destruir_todo(menu, destruir_nodo);
+}
+
+void menu_interactuar(menu_t *menu)
+{
+	if (!menu)
+		return;
 }
 
 int main()
@@ -125,17 +228,17 @@ int main()
 	menu_agregar(menu, "C", "Cargar un hospital", cargar_hospital);
 	menu_agregar(menu, "A", "Activar un hospital", activar_hospital);
 	menu_agregar(menu, "E", "Mostrar los hospitales", mostrar_hospitales);
-/*
-	menu_agregar(menu, "D", "Destruir el hospital activo", funcion);
-	menu_agregar(menu, "L", "Mostrar la lista detallada de pokemones de un hospital", funcion);
-	menu_agregar(menu, "M", "Mostrar la lista de nombres de pokemones de un hospital", funcion);
-*/
-	menu_agregar(menu, "H", "Mostrar los comandos disponibles", menu_mostrar);
-	menu_agregar(menu, "S", "Salir del menu", menu_destruir_todo);
-
+	menu_agregar(menu, "D", "Destruir hospital activo", destruir_hospital);
+	menu_agregar(menu, "M",
+		     "Mostrar los pokemones de un hospital",
+		     mostrar_pokemones);
+	menu_agregar(menu, "L",
+		     "Mostrar los pokemones detallados de un hospital",
+		     mostrar_pokemones_detallados);
+	menu_agregar(menu, "H", "Mostrar los comandos", menu_mostrar);
+	menu_agregar(menu, "S", "Salir del menu", destruir_menu);
 
 	menu_mostrar(menu);
-	
 	menu_interactuar(menu);
 
 	destruir_menu(menu);
