@@ -1,6 +1,7 @@
 #include "src/menu.h"
 
-#define MAX_ARCHIVO 100
+#define MAX_CLAVE 25
+#define MAX_ARCHIVO 200
 
 typedef struct nodo_menu {
 	hospital_t *hospital;
@@ -13,10 +14,11 @@ menu_t *cargar_hospital(menu_t *menu)
 	if (!menu)
 		return NULL;
 
-	size_t id;
 	char archivo[MAX_ARCHIVO];
 	printf("Ingrese el directorio del archivo del hospital\n");
 	fgets(archivo, MAX_ARCHIVO, stdin);
+
+	size_t id;
 	printf("Ingrese el id del hospital\n");
 	scanf("%zu", &id);
 
@@ -31,13 +33,13 @@ menu_t *cargar_hospital(menu_t *menu)
 	nodo->id = id;
 	nodo->activo = false;
 	nodo->hospital = hospital;
-/*
-	if (!lista_insertar(menu->hospitales, nodo)) {
+
+	if (!lista_insertar(menu_obtener_contenido(menu), nodo)) {
 		hospital_destruir(hospital);
 		free(nodo);
 		return NULL;
 	}
-*/
+
 	return menu;
 }
 
@@ -207,7 +209,7 @@ void destruir_nodo(void *n)
 	free(nodo);
 }
 
-void destruir_menu(menu_t *menu)
+void salir(menu_t *menu)
 {
 	if (!menu)
 		return;
@@ -215,33 +217,44 @@ void destruir_menu(menu_t *menu)
 	menu_destruir_todo(menu, destruir_nodo);
 }
 
-void menu_interactuar(menu_t *menu)
-{
-	if (!menu)
-		return;
-}
-
 int main()
 {
-	menu_t *menu = crear_menu(lista_crear());
+	char buffer[MAX_CLAVE];
+	menu_t *menu = menu_crear(lista_crear());
+	if (!menu) {
+		printf("Error al crear el Menu\n");
+		return -1;
+	}
 
 	menu_agregar(menu, "C", "Cargar un hospital", cargar_hospital);
 	menu_agregar(menu, "A", "Activar un hospital", activar_hospital);
 	menu_agregar(menu, "E", "Mostrar los hospitales", mostrar_hospitales);
 	menu_agregar(menu, "D", "Destruir hospital activo", destruir_hospital);
-	menu_agregar(menu, "M",
-		     "Mostrar los pokemones de un hospital",
+	menu_agregar(menu, "M", "Mostrar los pokemones de un hospital",
 		     mostrar_pokemones);
 	menu_agregar(menu, "L",
 		     "Mostrar los pokemones detallados de un hospital",
 		     mostrar_pokemones_detallados);
 	menu_agregar(menu, "H", "Mostrar los comandos", menu_mostrar);
-	menu_agregar(menu, "S", "Salir del menu", destruir_menu);
+	menu_agregar(menu, "S", "Salir del menu", salir);
 
+	if (!menu) {
+		printf("Error al agregar operaciones al Menu\n");
+		return -1;
+	}
 	menu_mostrar(menu);
-	menu_interactuar(menu);
 
-	destruir_menu(menu);
+	while (menu != NULL) {
+		printf("Ingrese la operacion que quiera realizar:\n");
+		fgets(buffer, MAX_CLAVE, stdin);
+		opcion_t *opcion = menu_obtener(menu, buffer);
+		if (!opcion)
+			printf("No se encontro la operacion\n");
+
+		menu_ejecutar(opcion, menu_obtener_contenido(menu));
+	}
+
+	salir(menu);
 
 	return 0;
 }

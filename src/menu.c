@@ -134,12 +134,12 @@ opcion_t *menu_obtener(menu_t *menu, char *clave)
 	return opcion;
 }
 
-void menu_ejecutar(menu_t *menu, opcion_t *operacion, void *dato)	//RETURN DE LA FUNCION
+void menu_ejecutar(opcion_t *operacion, void *dato)	//RETURN DE LA FUNCION
 {
-	if (!menu || !operacion)
+	if (!operacion || !operacion->operacion)
 		return;
 
-	operacion->operacion(menu->contenido, dato);
+	operacion->operacion(dato);
 }
 
 size_t menu_cantidad(menu_t *menu)

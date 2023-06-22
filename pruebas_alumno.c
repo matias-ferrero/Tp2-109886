@@ -7,8 +7,17 @@
 
 #define MAX_TEXTO 100
 
-void funcion(void *v1, void *v2)
+void funcion(menu_t *menu)
 {
+}
+
+void destruir(void *contenido)
+{
+	if (!contenido)
+		return;
+
+	lista_t *lista = (void *)contenido;
+	lista_destruir(lista);
 }
 
 void pruebas_de_creacion_y_destruccion_del_menu()
@@ -16,9 +25,19 @@ void pruebas_de_creacion_y_destruccion_del_menu()
 	menu_t *menu = menu_crear(NULL);
 
 	pa2m_afirmar(menu != NULL, "Se puede crear un menu con exito");
+	pa2m_afirmar(!menu_obtener_contenido(menu),
+		     "El menu no tiene contenido");
 	pa2m_afirmar(!menu_cantidad(menu), "El menu esta vacio");
 
 	menu_destruir(menu);
+
+	menu = menu_crear(lista_crear());
+
+	pa2m_afirmar(menu != NULL, "Se puede crear un menu con una lista");
+	pa2m_afirmar(menu_obtener_contenido(menu) != NULL,
+		     "Se puede obtener la lista del menu");
+
+	menu_destruir_todo(menu, destruir);
 }
 
 void pruebas_agregar_y_destruir()
