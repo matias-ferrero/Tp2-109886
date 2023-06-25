@@ -1,10 +1,7 @@
-#ifndef TP2_H_
-#define TP2_H_
+#ifndef MENU_H_
+#define MENU_H_
 
-#include "tp1.h"
 #include "hash.h"
-#include "lista.h"
-#include "pokemon.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -18,7 +15,7 @@ typedef struct menu menu_t;
  * La funcion a ejecutar asociada a una operacion.
  * Recibe un menu y no devuelve nada.
  */
-typedef void (*menu_operacion_t)(menu_t *);
+typedef int (*menu_operacion_t)(menu_t *);
 
 /**
  * Crea un menú. Recibe un elemento que sirve como contexto para el menú.
@@ -51,7 +48,7 @@ opcion_t *menu_obtener(menu_t *menu, char *clave);
  * Recibe una operacion y ejecuta su funcion asociada, con el dato que se pasa
  * por parametro.
  */
-void menu_ejecutar(opcion_t *operacion, void *dato);
+int menu_ejecutar(opcion_t *operacion, void *dato);
 
 /**
  * Devuelve la cantidad de operaciones almacenadas en el menu o 0 en
@@ -62,7 +59,7 @@ size_t menu_cantidad(menu_t *menu);
 /**
  * Muestra por pantalla todas las operaciones disponibles en el menu.
  */
-void menu_mostrar(menu_t *menu);
+int menu_mostrar(menu_t *menu);
 
 /**
  * Devuelve el contenido almacenado en el menu, o NULL si no exite
@@ -84,6 +81,13 @@ void *menu_cambiar_contenido(menu_t *menu, void *nuevo,
 			     void (*destruir)(void *));
 
 /**
+ * 
+ */
+size_t menu_con_cada_operacion(menu_t *menu,
+			   bool (*f)(const char *clave, void *op, void *aux),
+			   void *aux);
+
+/**
  * Destruye el menu liberando la memoria reservada.
  */
 void menu_destruir(menu_t *menu);
@@ -94,4 +98,4 @@ void menu_destruir(menu_t *menu);
  */
 void menu_destruir_todo(menu_t *menu, void (*f)(void *));
 
-#endif // PILA_H_
+#endif // MENU_H_

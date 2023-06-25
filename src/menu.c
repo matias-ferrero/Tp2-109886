@@ -1,6 +1,7 @@
 #include "menu.h"
 #include <ctype.h>
 
+#define ERROR -1
 #define CAPACIDAD_MENU 15
 
 struct opcion{
@@ -10,7 +11,6 @@ struct opcion{
 
 struct menu {
 	hash_t *opciones;
-	size_t cantidad;
 	void *contenido;
 };
 
@@ -27,7 +27,6 @@ menu_t *menu_crear(void *contexto)
 		return NULL;
 	}
 
-	menu->cantidad = hash_cantidad(menu->opciones);
 	return menu;
 }
 
@@ -61,58 +60,7 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,	//AGREGAR COMANDOS 
 	if (!hash_insertar(menu->opciones, &clave[0], opcion, NULL))
 		return NULL;
 
-	menu->cantidad = hash_cantidad(menu->opciones);
 	return menu;
-}
-
-bool buscar_operacion_similar(const char *clave, void *op, void *aux)
-{
-	op = op;
-	char *palabra_clave = aux;
-	if (!strcmp(clave, &palabra_clave[0])) {
-		printf("Quisiste decir: %c?", *clave);
-		return false;
-	}
-	return true;
-}
-
- void buscar_operacion(menu_t *menu, char *clave)
-{
-	if (!strcmp(clave, "SALIR") || (!strcmp(clave, "EXIT"))) {
-		char letra = 'S';
-		memcpy(clave, &letra, 1);
-	}
-
-	if (!strcmp(clave, "AYUDA") || (!strcmp(clave, "HELP"))) {
-		char letra = 'H';
-		memcpy(clave, &letra, 1);
-	}
-
-	if (!strcmp(clave, "CARGAR")) {
-		char letra = 'C';
-		memcpy(clave, &letra, 1);
-	}
-
-	if (!strcmp(clave, "ESTADO")) {
-		char letra = 'E';
-		memcpy(clave, &letra, 1);
-	}
-
-	if (!strcmp(clave, "MOSTRAR")) {
-		char letra = 'M';
-		memcpy(clave, &letra, 1);
-	}
-
-	if (!strcmp(clave, "LISTAR")) {
-		char letra = 'L';
-		memcpy(clave, &letra, 1);
-	}
-	
-	if (!strcmp(clave, "DESTRUIR")) {
-		char letra = 'D';
-		memcpy(clave, &letra, 1);
-	}
-
 }
 
 opcion_t *menu_obtener(menu_t *menu, char *clave)
@@ -123,23 +71,15 @@ opcion_t *menu_obtener(menu_t *menu, char *clave)
 	for (int i = 0;  i < strlen(clave); i++)
 		clave[i] = (char)toupper(clave[i]);
 
-	buscar_operacion(menu, clave);
-
-	opcion_t *opcion = hash_obtener(menu->opciones, clave);
-	if (!opcion) {
-		printf("No se encontro la operacion que pediste\n");
-		hash_con_cada_clave(menu->opciones, buscar_operacion_similar,
-				    clave);
-	}
-	return opcion;
+	return hash_obtener(menu->opciones, clave);
 }
 
-void menu_ejecutar(opcion_t *operacion, void *dato)	//RETURN DE LA FUNCION
+int menu_ejecutar(opcion_t *operacion, void *dato)
 {
 	if (!operacion || !operacion->operacion)
-		return;
+		return ERROR;
 
-	operacion->operacion(dato);
+	return operacion->operacion(dato);
 }
 
 size_t menu_cantidad(menu_t *menu)
@@ -147,7 +87,7 @@ size_t menu_cantidad(menu_t *menu)
 	if (!menu)
 		return 0;
 
-	return menu->cantidad;
+	return hash_cantidad(menu->opciones);
 }
 
 bool mostrar_opcion(const char *clave, void *op, void *aux)
@@ -161,15 +101,9 @@ bool mostrar_opcion(const char *clave, void *op, void *aux)
 	return true;
 }
 
-void menu_mostrar(menu_t *menu)
+int menu_mostrar(menu_t *menu)
 {
-	if (!menu || !menu_cantidad(menu))
-		return;
-
-	size_t mostrados = hash_con_cada_clave(menu->opciones,
-					       mostrar_opcion, NULL);
-	if (mostrados != menu->cantidad)
-		printf("Error desplejando el menu\n");
+	return (int)menu_con_cada_operacion(menu, mostrar_opcion, NULL);
 }
 
 void *menu_obtener_contenido(menu_t *menu)
@@ -192,6 +126,15 @@ void *menu_cambiar_contenido(menu_t *menu, void *nuevo,
 	menu->contenido = nuevo;
 
 	return menu->contenido;
+}
+
+size_t menu_con_cada_operacion(menu_t *menu,
+			   bool (*f)(const char *clave, void *op, void *aux),
+			   void *aux) {
+	if (!menu)
+		return 0;
+
+	return hash_con_cada_clave(menu->opciones, f, aux);
 }
 
 void destruir_opcion(void *op)

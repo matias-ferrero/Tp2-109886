@@ -1,4 +1,5 @@
 #include "pa2m.h"
+#include "tp2.h"
 #include "src/menu.h"
 
 #include <stdio.h>
@@ -7,8 +8,9 @@
 
 #define MAX_TEXTO 100
 
-void funcion(menu_t *menu)
+int funcion(menu_t *menu)
 {
+	return 0;
 }
 
 void destruir(void *contenido)
