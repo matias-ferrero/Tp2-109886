@@ -12,7 +12,6 @@ typedef struct nodo_menu {
 	hospital_t *hospital;
 } nodo_menu_t;
 
-
 int buscar_hospital_activo(void *elemento, void *pos)
 {
 	if (!elemento || !pos)
@@ -32,11 +31,12 @@ int buscar_hospital_activo(void *elemento, void *pos)
  * ----------------------------------------------------------------------------
  */
 
-int cargar_hospital(menu_t *menu)
+int cargar_hospital(void *menu1)
 {
-	if (!menu)
+	if (!menu1)
 		return TERMINAR;
 
+	menu_t *menu = (menu_t *)menu1;
 	nodo_menu_t *nodo = malloc(sizeof(nodo_menu_t));
 	if (!nodo) {
 		printf("Error\n");
@@ -99,10 +99,12 @@ bool desactivar_hospital(void *elemento, void *aux)
 	return true;
 }
 
-int activar_hospital(menu_t *menu)
+int activar_hospital(void *menu1)
 {
-	if (!menu)
+	if (!menu1)
 		return TERMINAR;
+
+	menu_t *menu = (menu_t *)menu1;
 
 	size_t id;
 	printf("Ingrese el id del hospital que quiere activar\n");
@@ -136,18 +138,19 @@ bool mostrar_hospital(void *elemento, void *aux)
 	nodo_menu_t *nodo = (nodo_menu_t *)elemento;
 
 	if (nodo->activo)
-		printf("Hospital N°%zu: Activo", nodo->id);
+		printf("Hospital N°%zu: Activo\n", nodo->id);
 	else
-		printf("Hospital N°%zu: No activo", nodo->id);
+		printf("Hospital N°%zu: No activo\n", nodo->id);
 
 	return true;
 }
 
-int mostrar_hospitales(menu_t *menu)
+int mostrar_hospitales(void *menu1)
 {
-	if (!menu)
+	if (!menu1)
 		return TERMINAR;
 
+	menu_t *menu = (menu_t *)menu1;
 	lista_t *lista = menu_obtener_contenido(menu);
 	lista_con_cada_elemento(lista, mostrar_hospital, NULL);
 
@@ -158,11 +161,12 @@ int mostrar_hospitales(menu_t *menu)
  * ----------------------------------------------------------------------------
  */
 
-int destruir_hospital(menu_t *menu)
+int destruir_hospital(void *menu1)
 {
-	if (!menu)
+	if (!menu1)
 		return TERMINAR;
 
+	menu_t *menu = (menu_t *)menu1;
 	size_t posicion = 0;
 	lista_t *lista = menu_obtener_contenido(menu);
 	nodo_menu_t *nodo;
@@ -192,17 +196,18 @@ bool mostrar_pokemon(void *elemento, void *contador)
 	return true;
 }
 
-int mostrar_pokemones(menu_t *menu)
+int mostrar_pokemones(void *menu1)
 {
-	if (!menu)
+	if (!menu1)
 		return TERMINAR;
 
+	menu_t *menu = (menu_t *)menu1;
 	size_t contador = 0;
 	lista_t *lista = menu_obtener_contenido(menu);
 	nodo_menu_t *nodo;
 	nodo = lista_buscar_elemento(lista, buscar_hospital_activo, &contador);
 	if (!nodo) {
-		printf("Error al buscar un Hospital activo");
+		printf("Error al buscar un Hospital activo\n");
 		return ERROR;
 	}
 
@@ -230,11 +235,12 @@ bool mostrar_pokemon_detallado(void *elemento, void *contador)
 	return true;
 }
 
-int mostrar_pokemones_detallados(menu_t *menu)
+int mostrar_pokemones_detallados(void *menu1)
 {
-	if (!menu)
+	if (!menu1)
 		return TERMINAR;
 
+	menu_t *menu = (menu_t *)menu1;
 	size_t contador = 0;
 	lista_t *lista = menu_obtener_contenido(menu);
 	nodo_menu_t *nodo;
@@ -252,6 +258,32 @@ int mostrar_pokemones_detallados(menu_t *menu)
  * ----------------------------------------------------------------------------
  */
 
+bool mostrar_opcion(const char *clave, void *op, void *aux)
+{
+	aux = aux;
+	if (!clave || !op)
+		return false;
+
+	opcion_t *opcion = op;
+	printf("%s: %s\n", clave, obtener_informacion(opcion));
+	return true;
+}
+
+int menu_mostrar(void *menu)
+{
+	if (!menu)
+		return TERMINAR;
+
+	if (!menu_con_cada_operacion((menu_t *)menu, mostrar_opcion, NULL))
+		return ERROR;
+
+	return EXITO;
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ */
+
 void destruir_nodo(void *n)
 {
 	if (!n)
@@ -262,11 +294,12 @@ void destruir_nodo(void *n)
 	free(nodo);
 }
 
-int menu_salir(menu_t *menu)
+int menu_salir(void *menu1)
 {
-	if (!menu)
+	if (!menu1)
 		return TERMINAR;
 
+	menu_t *menu = (menu_t *)menu1;
 	menu_destruir_todo(menu, destruir_nodo);
 	return TERMINAR;
 }
@@ -284,7 +317,7 @@ bool comparar_claves(const char *clave, void *op, void *aux)
 	opcion_t *opcion = op;
 
 	if (clave[0] == palabra[0]) {
-		printf("Quisiste decir la operacion %c?", *clave);
+		printf("Quisiste decir la operacion %c?\n", *clave);
 		return false;
 	}
 
@@ -334,16 +367,34 @@ int main()
 	}
 
 	menu_agregar(menu, "C", "Cargar un hospital", cargar_hospital);
+	menu_agregar(menu, "cargar", "Cargar un hospital", cargar_hospital);
+
 	menu_agregar(menu, "A", "Activar un hospital", activar_hospital);
+	menu_agregar(menu, "activar", "Activar un hospital", activar_hospital);
+
 	menu_agregar(menu, "E", "Mostrar los hospitales", mostrar_hospitales);
+	menu_agregar(menu, "estado", "Mostrar los hospitales", mostrar_hospitales);
+
 	menu_agregar(menu, "D", "Destruir hospital activo", destruir_hospital);
+	menu_agregar(menu, "destruir", "Destruir hospital activo", destruir_hospital);
+
 	menu_agregar(menu, "M", "Mostrar los pokemones de un hospital",
 		     mostrar_pokemones);
-	menu_agregar(menu, "L",
-		     "Mostrar los pokemones detallados de un hospital",
+	menu_agregar(menu, "mostrar", "Mostrar los pokemones de un hospital",
+		     mostrar_pokemones);
+
+	menu_agregar(menu, "L", "Mostrar los pokemones detallados de un hospital",
 		     mostrar_pokemones_detallados);
+	menu_agregar(menu, "listar", "Mostrar los pokemones detallados de un hospital",
+		     mostrar_pokemones_detallados);
+
 	menu_agregar(menu, "H", "Mostrar los comandos", menu_mostrar);
+	menu_agregar(menu, "ayuda", "Mostrar los comandos", menu_mostrar);
+	menu_agregar(menu, "help", "Mostrar los comandos", menu_mostrar);
+
 	menu_agregar(menu, "S", "Salir del menu", menu_salir);
+	menu_agregar(menu, "salir", "Salir del menu", menu_salir);
+	menu_agregar(menu, "exit", "Salir del menu", menu_salir);
 
 	menu_mostrar(menu);
 

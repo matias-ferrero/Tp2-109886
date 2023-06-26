@@ -30,82 +30,6 @@ menu_t *menu_crear(void *contexto)
 	return menu;
 }
 
-opcion_t *crear_opcion(char *texto, menu_operacion_t funcion)
-{
-	opcion_t *opcion = malloc(sizeof(opcion_t));
-	if (!opcion)
-		return NULL;
-
-	opcion->operacion = funcion;
-	opcion->informacion = texto;
-	return opcion;
-}
-
-menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,	//AGREGAR COMANDOS DE UNA SOLA LETRA
-		     menu_operacion_t funcion)
-{
-	if (!menu || !clave || !texto || !funcion)
-		return NULL;
-
-	*clave = (char)toupper(*clave);
-	if (hash_contiene(menu->opciones, &clave[0])) {
-		printf("Operacion ya existente\n");
-		return NULL;
-	}
-
-	opcion_t *opcion = crear_opcion(texto, funcion);
-	if (!opcion)
-		return NULL;
-
-	if (!hash_insertar(menu->opciones, &clave[0], opcion, NULL))
-		return NULL;
-
-	return menu;
-}
-
-opcion_t *menu_obtener(menu_t *menu, char *clave)
-{
-	if (!menu || !clave || !menu_cantidad(menu))
-		return NULL;
-
-	for (int i = 0;  i < strlen(clave); i++)
-		clave[i] = (char)toupper(clave[i]);
-
-	return hash_obtener(menu->opciones, clave);
-}
-
-int menu_ejecutar(opcion_t *operacion, void *dato)
-{
-	if (!operacion || !operacion->operacion)
-		return ERROR;
-
-	return operacion->operacion(dato);
-}
-
-size_t menu_cantidad(menu_t *menu)
-{
-	if (!menu)
-		return 0;
-
-	return hash_cantidad(menu->opciones);
-}
-
-bool mostrar_opcion(const char *clave, void *op, void *aux)
-{
-	aux = aux;
-	if (!clave)
-		return false;
-
-	opcion_t *opcion = op;
-	printf("%c: %s\n", clave[0], opcion->informacion);
-	return true;
-}
-
-int menu_mostrar(menu_t *menu)
-{
-	return (int)menu_con_cada_operacion(menu, mostrar_opcion, NULL);
-}
-
 void *menu_obtener_contenido(menu_t *menu)
 {
 	if (!menu)
@@ -128,10 +52,82 @@ void *menu_cambiar_contenido(menu_t *menu, void *nuevo,
 	return menu->contenido;
 }
 
+opcion_t *crear_opcion(char *texto, menu_operacion_t funcion)
+{
+	opcion_t *opcion = malloc(sizeof(opcion_t));
+	if (!opcion)
+		return NULL;
+
+	opcion->operacion = funcion;
+	opcion->informacion = texto;
+	return opcion;
+}
+
+menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
+		     menu_operacion_t funcion)
+{
+	if (!menu || !clave || !texto || !funcion)
+		return NULL;
+
+	for (size_t i = 0; i < strlen(clave); i++)
+		clave[i] = (char)toupper(clave[i]);
+
+	opcion_t *actual = hash_obtener(menu->opciones, clave);
+	if (actual != NULL) {
+		strcpy(actual->informacion, texto);
+		actual->operacion = funcion;
+		return menu;
+	}
+
+	opcion_t *opcion = crear_opcion(texto, funcion);
+	if (!opcion)
+		return NULL;
+
+	if (!hash_insertar(menu->opciones, clave, opcion, NULL))
+		return NULL;
+
+	return menu;
+}
+
+size_t menu_cantidad(menu_t *menu)
+{
+	if (!menu)
+		return 0;
+
+	return hash_cantidad(menu->opciones);
+}
+
+opcion_t *menu_obtener(menu_t *menu, char *clave)
+{
+	if (!menu || !clave || !menu_cantidad(menu))
+		return NULL;
+
+	for (int i = 0;  i < strlen(clave); i++)
+		clave[i] = (char)toupper(clave[i]);
+
+	return hash_obtener(menu->opciones, clave);
+}
+
+char *obtener_informacion(opcion_t *opcion)
+{
+	if (!opcion)
+		return NULL;
+
+	return opcion->informacion;
+}
+
+int menu_ejecutar(opcion_t *operacion, void *dato)
+{
+	if (!operacion || !operacion->operacion)
+		return ERROR;
+
+	return operacion->operacion(dato);
+}
+
 size_t menu_con_cada_operacion(menu_t *menu,
 			   bool (*f)(const char *clave, void *op, void *aux),
 			   void *aux) {
-	if (!menu)
+	if (!menu || !f || !menu_cantidad(menu))
 		return 0;
 
 	return hash_con_cada_clave(menu->opciones, f, aux);
