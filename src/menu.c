@@ -4,7 +4,7 @@
 #define ERROR -1
 #define CAPACIDAD_MENU 15
 
-struct opcion{
+struct opcion {
 	menu_operacion_t operacion;
 	char *informacion;
 };
@@ -102,7 +102,7 @@ opcion_t *menu_obtener(menu_t *menu, char *clave)
 	if (!menu || !clave || !menu_cantidad(menu))
 		return NULL;
 
-	for (int i = 0;  i < strlen(clave); i++)
+	for (int i = 0; i < strlen(clave); i++)
 		clave[i] = (char)toupper(clave[i]);
 
 	return hash_obtener(menu->opciones, clave);
@@ -125,8 +125,10 @@ int menu_ejecutar(opcion_t *operacion, void *dato)
 }
 
 size_t menu_con_cada_operacion(menu_t *menu,
-			   bool (*f)(const char *clave, void *op, void *aux),
-			   void *aux) {
+			       bool (*f)(const char *clave, void *op,
+					 void *aux),
+			       void *aux)
+{
 	if (!menu || !f || !menu_cantidad(menu))
 		return 0;
 

@@ -50,8 +50,9 @@ void pruebas_obtener_y_modificar_contenido_del_menu()
 {
 	menu_t *menu = menu_crear(NULL);
 
-	pa2m_afirmar(!menu_obtener_contenido(menu),
-		     "Pedir el contenido de un menu sin contenido devuelve NULL");
+	pa2m_afirmar(
+		!menu_obtener_contenido(menu),
+		"Pedir el contenido de un menu sin contenido devuelve NULL");
 
 	pa2m_afirmar(menu_cambiar_contenido(menu, lista_crear(), NULL) != NULL,
 		     "Se puede cambiar el contenido actual por una lista");
@@ -59,7 +60,8 @@ void pruebas_obtener_y_modificar_contenido_del_menu()
 	pa2m_afirmar(menu_obtener_contenido(menu) != NULL,
 		     "Se puede obtener la lista del contenido del menu");
 
-	pa2m_afirmar(menu_cambiar_contenido(menu, lista_crear(), destruir_lista) != NULL,
+	pa2m_afirmar(menu_cambiar_contenido(menu, lista_crear(),
+					    destruir_lista) != NULL,
 		     "Se puede cambiar la lista actual por una nueva lista");
 
 	pa2m_afirmar(menu_obtener_contenido(menu) != NULL,
@@ -83,17 +85,20 @@ void pruebas_agregar_y_destruir()
 	pa2m_afirmar(menu_agregar(menu, &clave2, texto1, cantidad_op) != NULL,
 		     "Se puede agregar una operacion con clave no mayuscula");
 
-	pa2m_afirmar(menu_agregar(menu, clave3, texto1, cantidad_op) != NULL,
-		     "Se puede agregar la misma operacion con una clave sinonimo");
+	pa2m_afirmar(
+		menu_agregar(menu, clave3, texto1, cantidad_op) != NULL,
+		"Se puede agregar la misma operacion con una clave sinonimo");
 
-	pa2m_afirmar(menu_cantidad(menu) == 3,
-		     "Se agregaron 3 operaciones y la cantidad de operaciones es 3");
+	pa2m_afirmar(
+		menu_cantidad(menu) == 3,
+		"Se agregaron 3 operaciones y la cantidad de operaciones es 3");
 
 	pa2m_afirmar(menu_agregar(menu, &clave2, texto2, cantidad_op) != NULL,
 		     "Se puede modificar una operacion");
 
-	pa2m_afirmar(menu_cantidad(menu) == 3,
-		     "Se modifico una operacion y la cantidad de operaciones sigue siendo 3");
+	pa2m_afirmar(
+		menu_cantidad(menu) == 3,
+		"Se modifico una operacion y la cantidad de operaciones sigue siendo 3");
 
 	menu_destruir(menu);
 }
@@ -128,17 +133,19 @@ void pruebas_buscar_operaciones_por_clave()
 	pa2m_afirmar(!strcmp(texto, texto1),
 		     "Se puede obtener la informacion de una operacion");
 
-	pa2m_afirmar(menu_obtener(menu, clave3) != NULL,
-		     "Se puede obtener la misma operacion con una clave sinonimo");
+	pa2m_afirmar(
+		menu_obtener(menu, clave3) != NULL,
+		"Se puede obtener la misma operacion con una clave sinonimo");
 
 	menu_agregar(menu, &clave2, texto2, cantidad_op);
 	pa2m_afirmar(menu_obtener(menu, &clave2) != NULL,
 		     "Se puede volver a obtener la operacion modificada");
 
 	texto = obtener_informacion(menu_obtener(menu, &clave2));
-	pa2m_afirmar(!strcmp(texto, texto2),
-		     "Se puede obtener la informacion modficada de una operacion");
-	
+	pa2m_afirmar(
+		!strcmp(texto, texto2),
+		"Se puede obtener la informacion modficada de una operacion");
+
 	menu_destruir(menu);
 }
 
@@ -159,8 +166,9 @@ void pruebas_ejecutar_operaciones()
 		     "Se puede ejecutar la operacion guardada");
 
 	opcion = menu_obtener(menu, &clave2);
-	pa2m_afirmar(menu_ejecutar(opcion, menu) == menu_cantidad(menu),
-		     "Se puede ejecutar la operacion guardada con una clave sinonimo");
+	pa2m_afirmar(
+		menu_ejecutar(opcion, menu) == menu_cantidad(menu),
+		"Se puede ejecutar la operacion guardada con una clave sinonimo");
 
 	menu_agregar(menu, &clave2, texto2, cantidad_op);
 	opcion = menu_obtener(menu, &clave2);
@@ -186,12 +194,14 @@ void pruebas_menu_iterador_interno()
 	menu_agregar(menu, &clave2, texto1, cantidad_op);
 	menu_agregar(menu, clave3, texto1, cantidad_op);
 
-	pa2m_afirmar(menu_con_cada_operacion(menu, mostrar_operacion, NULL) == menu_cantidad(menu),
+	pa2m_afirmar(menu_con_cada_operacion(menu, mostrar_operacion, NULL) ==
+			     menu_cantidad(menu),
 		     "Se pueden iterar las operaciones del menu");
 
 	menu_agregar(menu, &clave2, texto2, cantidad_op);
 
-	pa2m_afirmar(menu_con_cada_operacion(menu, mostrar_operacion, NULL) == menu_cantidad(menu),
+	pa2m_afirmar(menu_con_cada_operacion(menu, mostrar_operacion, NULL) ==
+			     menu_cantidad(menu),
 		     "Se pueden iterar las operaciones modificadas del menu");
 
 	menu_destruir(menu);
@@ -202,7 +212,8 @@ void pruebas_de_operaciones_del_tda_menu()
 	pa2m_nuevo_grupo("PRUEBAS DE CREACION Y DESTRUCCION");
 	pruebas_de_creacion_y_destruccion_del_menu();
 
-	pa2m_nuevo_grupo("PRUEBAS DE OBTENER Y MODIFICAR EL CONTENIDO DEL MENU");
+	pa2m_nuevo_grupo(
+		"PRUEBAS DE OBTENER Y MODIFICAR EL CONTENIDO DEL MENU");
 	pruebas_obtener_y_modificar_contenido_del_menu();
 
 	pa2m_nuevo_grupo("PRUEBAS DE AGREGAR OPERACION Y DESTRUIR MENU");
@@ -279,8 +290,9 @@ void pruebas_del_tda_menu_con_parametros_nulos()
 	pa2m_afirmar(menu_ejecutar(NULL, NULL) == -1,
 		     "No se puede ejecutar una operacion invalida");
 
-	pa2m_afirmar(!menu_cantidad(NULL),
-		     "No se puede obtener la cantidad de operaciones de un menu invalido");
+	pa2m_afirmar(
+		!menu_cantidad(NULL),
+		"No se puede obtener la cantidad de operaciones de un menu invalido");
 
 	pa2m_afirmar(!menu_obtener_contenido(NULL),
 		     "No se puede obtener el contenido de un menu invalido");
@@ -288,14 +300,16 @@ void pruebas_del_tda_menu_con_parametros_nulos()
 	pa2m_afirmar(!menu_cambiar_contenido(NULL, nueva_lista, NULL),
 		     "No se puede cambiar el contenido de un menu invalido");
 
-	pa2m_afirmar(!menu_cambiar_contenido(menu, NULL, NULL),
-		     "No se puede cambiar el contenido del menu por un contenido invalido");
+	pa2m_afirmar(
+		!menu_cambiar_contenido(menu, NULL, NULL),
+		"No se puede cambiar el contenido del menu por un contenido invalido");
 
 	pa2m_afirmar(!menu_con_cada_operacion(NULL, mostrar_operacion, NULL),
 		     "No se pueden iterar operaciones de un menu invalido");
 
-	pa2m_afirmar(!menu_con_cada_operacion(menu, NULL, NULL),
-		     "No se pueden iterar operaciones de un menu con una funcion invalida");
+	pa2m_afirmar(
+		!menu_con_cada_operacion(menu, NULL, NULL),
+		"No se pueden iterar operaciones de un menu con una funcion invalida");
 
 	lista_destruir(nueva_lista);
 	menu_destruir_todo(menu, destruir_lista);

@@ -373,19 +373,23 @@ int main()
 	menu_agregar(menu, "activar", "Activar un hospital", activar_hospital);
 
 	menu_agregar(menu, "E", "Mostrar los hospitales", mostrar_hospitales);
-	menu_agregar(menu, "estado", "Mostrar los hospitales", mostrar_hospitales);
+	menu_agregar(menu, "estado", "Mostrar los hospitales",
+		     mostrar_hospitales);
 
 	menu_agregar(menu, "D", "Destruir hospital activo", destruir_hospital);
-	menu_agregar(menu, "destruir", "Destruir hospital activo", destruir_hospital);
+	menu_agregar(menu, "destruir", "Destruir hospital activo",
+		     destruir_hospital);
 
 	menu_agregar(menu, "M", "Mostrar los pokemones de un hospital",
 		     mostrar_pokemones);
 	menu_agregar(menu, "mostrar", "Mostrar los pokemones de un hospital",
 		     mostrar_pokemones);
 
-	menu_agregar(menu, "L", "Mostrar los pokemones detallados de un hospital",
+	menu_agregar(menu, "L",
+		     "Mostrar los pokemones detallados de un hospital",
 		     mostrar_pokemones_detallados);
-	menu_agregar(menu, "listar", "Mostrar los pokemones detallados de un hospital",
+	menu_agregar(menu, "listar",
+		     "Mostrar los pokemones detallados de un hospital",
 		     mostrar_pokemones_detallados);
 
 	menu_agregar(menu, "H", "Mostrar los comandos", menu_mostrar);

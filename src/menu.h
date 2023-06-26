@@ -59,7 +59,7 @@ void *menu_cambiar_contenido(menu_t *menu, void *nuevo,
  * Devuelve el menu si pudo guardar la operacion, o NULL en caso de error.
  */
 menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
- 		     menu_operacion_t funcion);
+		     menu_operacion_t funcion);
 
 /**
  * Devuelve la cantidad de operaciones almacenadas en el menu o 0 en
@@ -103,8 +103,9 @@ int menu_ejecutar(opcion_t *operacion, void *dato);
  * que fue invocada la función) o 0 en caso de error.
  */
 size_t menu_con_cada_operacion(menu_t *menu,
-			   bool (*f)(const char *clave, void *op, void *aux),
-			   void *aux);
+			       bool (*f)(const char *clave, void *op,
+					 void *aux),
+			       void *aux);
 
 /**
  * Destruye el menu liberando la memoria reservada.
