@@ -12,7 +12,7 @@
 typedef struct nodo_menu {
 	size_t id;
 	bool activo;
-	char *nombre_archivo;
+	char nombre_archivo[MAX_ARCHIVO];
 	hospital_t *hospital;
 } nodo_menu_t;
 
@@ -339,10 +339,14 @@ bool menu_interactuar(menu_t *menu)
 
 	char buffer[MAX_CLAVE];
 	printf("Ingrese la operacion que quiera realizar:\n");
-	fgets(buffer, MAX_CLAVE, stdin);
+	if (!fgets(buffer, MAX_CLAVE, stdin)) {
+		printf("Archivo invalido\n");
+		return true;
+	}
 
+	buffer[strlen(buffer) - 1] = 0;
 	opcion_t *opcion = menu_obtener(menu, buffer);
-	int resultado = menu_ejecutar(opcion, menu_obtener_contenido(menu));
+	int resultado = menu_ejecutar(opcion, menu);
 
 	if (resultado == TERMINAR)
 		return true;
@@ -412,8 +416,10 @@ int main()
 	menu_mostrar(menu);
 
 	bool salir = false;
-	while (!salir)
+	while (!salir) {
 		salir = menu_interactuar(menu);
+		printf("\n");
+	}
 
 	menu_salir(menu);
 
