@@ -5,8 +5,10 @@
 #include "src/lista.h"
 #include "src/pokemon.h"
 
+#define ERROR -1
+#define EXITO 0
 #define TERMINAR -2
-#define MAX_CLAVE 50
+#define MAX_NOMBRE 50
 #define MAX_ARCHIVO 200
 
 typedef struct nodo_menu {
@@ -48,7 +50,11 @@ int cargar_hospital(void *menu1)
 	}
 
 	printf("Ingrese el directorio del archivo del hospital\n");
-	fgets(nodo->nombre_archivo, MAX_ARCHIVO, stdin);
+	if (!fgets(nodo->nombre_archivo, MAX_ARCHIVO, stdin)) {
+		printf("Archivo invalido\n");
+		return true;
+	}
+	nodo->nombre_archivo[strlen(nodo->nombre_archivo) - 1] = 0;
 
 	nodo->hospital = hospital_crear_desde_archivo(nodo->nombre_archivo);
 	if (!nodo->hospital) {
@@ -156,7 +162,8 @@ int mostrar_hospitales(void *menu1)
 
 	menu_t *menu = (menu_t *)menu1;
 	lista_t *lista = menu_obtener_contenido(menu);
-	lista_con_cada_elemento(lista, mostrar_hospital, NULL);
+	if (!lista_con_cada_elemento(lista, mostrar_hospital, NULL))
+		printf("No hay hospitales cargados\n");
 
 	return EXITO;
 }
@@ -180,6 +187,7 @@ int destruir_hospital(void *menu1)
 		return ERROR;
 	}
 
+	hospital_destruir(nodo->hospital);
 	lista_quitar_de_posicion(lista, posicion);
 	return EXITO;
 }
@@ -260,14 +268,14 @@ int mostrar_pokemones_detallados(void *menu1)
  * ----------------------------------------------------------------------------
  */
 
-bool mostrar_opcion(const char *clave, void *op, void *aux)
+bool mostrar_opcion(const char *nombre, void *op, void *aux)
 {
 	aux = aux;
-	if (!clave || !op)
+	if (!nombre || !op)
 		return false;
 
 	opcion_t *opcion = op;
-	printf("%s: %s\n", clave, obtener_informacion(opcion));
+	printf("%s: %s\n", nombre, obtener_informacion(opcion));
 	return true;
 }
 
@@ -291,9 +299,17 @@ void destruir_nodo(void *n)
 	if (!n)
 		return;
 
-	nodo_menu_t *nodo = n;
+	nodo_menu_t *nodo = (nodo_menu_t *)n;
 	hospital_destruir(nodo->hospital);
 	free(nodo);
+}
+
+void destruir_lista(void *lista)
+{
+	if (!lista)
+		return;
+
+	lista_destruir_todo((lista_t *)lista, destruir_nodo);
 }
 
 int menu_salir(void *menu1)
@@ -302,7 +318,7 @@ int menu_salir(void *menu1)
 		return TERMINAR;
 
 	menu_t *menu = (menu_t *)menu1;
-	menu_destruir_todo(menu, destruir_nodo);
+	menu_destruir_todo(menu, destruir_lista);
 	return TERMINAR;
 }
 
@@ -310,54 +326,29 @@ int menu_salir(void *menu1)
  * ----------------------------------------------------------------------------
  */
 
-bool comparar_claves(const char *clave, void *op, void *aux)
-{
-	if (!clave || !aux)
-		return true;
-
-	char *palabra = (char *)aux;
-	opcion_t *opcion = op;
-
-	if (clave[0] == palabra[0]) {
-		printf("Quisiste decir la operacion %c?\n", *clave);
-		printf("%c: %s", *clave, obtener_informacion(opcion));
-		return false;
-	}
-
-	return true;
-}
-
-void buscar_operaciones_similares(menu_t *menu, char *clave)
-{
-	menu_con_cada_operacion(menu, comparar_claves, &clave);
-}
-
 bool menu_interactuar(menu_t *menu)
 {
 	if (!menu)
 		return true;
 
-	char buffer[MAX_CLAVE];
+	char buffer[MAX_NOMBRE];
 	printf("Ingrese la operacion que quiera realizar:\n");
-	if (!fgets(buffer, MAX_CLAVE, stdin)) {
-		printf("Archivo invalido\n");
+	if (!fgets(buffer, MAX_NOMBRE, stdin)) {
+		printf("Operacion invalida\n");
 		return true;
 	}
 
 	buffer[strlen(buffer) - 1] = 0;
-	opcion_t *opcion = menu_obtener(menu, buffer);
-	int resultado = menu_ejecutar(opcion, menu);
+	int resultado = menu_ejecutar_operacion(menu, buffer, menu);
 
 	if (resultado == TERMINAR)
 		return true;
 
-	if (resultado == ERROR) {
-		if (!opcion) {
-			printf("No se encontro la operacion\n");
-			buscar_operaciones_similares(menu, buffer);
-		}
+	if (resultado == ERROR)
 		printf("H para ayuda\n");
-	}
+	else if (resultado == EXITO)
+		printf("Operacion exitosa\n");
+
 	return false;
 }
 
@@ -421,7 +412,7 @@ int main()
 		printf("\n");
 	}
 
-	menu_salir(menu);
+	//menu_salir(menu);
 
 	return 0;
 }

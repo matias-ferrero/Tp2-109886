@@ -106,76 +106,31 @@ void pruebas_agregar_y_destruir()
 	menu_destruir(menu);
 }
 
-void pruebas_buscar_operaciones_por_clave()
+void pruebas_obtener_y_ejecutar_operaciones()
 {
 	menu_t *menu = menu_crear(NULL);
-	char clave1 = 'A';
-	char clave2 = 'b';
-	char clave3[] = "clAvE";
+	char clave = 'b';
 	char texto1[MAX_TEXTO] = "Texto de prueba";
 	char texto2[MAX_TEXTO] = "Texto de prueba 2";
 
-	pa2m_afirmar(!menu_obtener(menu, &clave1),
-		     "No se puede obtener una operacion de un menu vacio");
+	pa2m_afirmar(menu_ejecutar_operacion(menu, "A", NULL) == -1,
+		     "No se puede ejecutar una operacion de un menu vacio");
 
-	menu_agregar(menu, &clave1, texto1, cantidad_op);
-
-	pa2m_afirmar(!menu_obtener(menu, &clave2),
+	menu_agregar(menu, "A", texto1, cantidad_op);
+	pa2m_afirmar(menu_ejecutar_operacion(menu, &clave, NULL) == -1,
 		     "No se puede obtener una operacion que no se agrego");
 
-	menu_agregar(menu, &clave2, texto1, cantidad_op);
-	menu_agregar(menu, clave3, texto1, cantidad_op);
+	menu_agregar(menu, &clave, texto1, cantidad_op);
 
-	pa2m_afirmar(menu_obtener(menu, &clave1) != NULL,
-		     "Se puede obtener una operacion agregada");
-
-	pa2m_afirmar(menu_obtener(menu, &clave2) != NULL,
-		     "Se puede obtener una operacion con clave no mayuscula");
-
-	char *texto = obtener_informacion(menu_obtener(menu, &clave2));
-	pa2m_afirmar(!strcmp(texto, texto1),
-		     "Se puede obtener la informacion de una operacion");
-
-	pa2m_afirmar(
-		menu_obtener(menu, "clave") != NULL,
-		"Se puede obtener la misma operacion con una clave sinonimo");
-
-	menu_agregar(menu, &clave2, texto2, cantidad_op);
-	pa2m_afirmar(menu_obtener(menu, &clave2) != NULL,
-		     "Se puede volver a obtener la operacion modificada");
-
-	texto = obtener_informacion(menu_obtener(menu, &clave2));
-	pa2m_afirmar(
-		!strcmp(texto, texto2),
-		"Se puede obtener la informacion modficada de una operacion");
-
-	menu_destruir(menu);
-}
-
-void pruebas_ejecutar_operaciones()
-{
-	menu_t *menu = menu_crear(NULL);
-	opcion_t *opcion;
-	char clave1 = 'A';
-	char clave2 = 'b';
-	char texto1[MAX_TEXTO] = "Texto de prueba";
-	char texto2[MAX_TEXTO] = "Texto de prueba 2";
-
-	menu_agregar(menu, &clave1, texto1, cantidad_op);
-	menu_agregar(menu, &clave2, texto1, cantidad_op);
-
-	opcion = menu_obtener(menu, &clave1);
-	pa2m_afirmar(menu_ejecutar(opcion, menu) == menu_cantidad(menu),
+	pa2m_afirmar(menu_ejecutar_operacion(menu, "A", menu) == menu_cantidad(menu),
 		     "Se puede ejecutar la operacion guardada");
 
-	opcion = menu_obtener(menu, &clave2);
 	pa2m_afirmar(
-		menu_ejecutar(opcion, menu) == menu_cantidad(menu),
+		menu_ejecutar_operacion(menu, &clave, menu) == menu_cantidad(menu),
 		"Se puede ejecutar la operacion guardada con una clave sinonimo");
 
-	menu_agregar(menu, &clave2, texto2, cantidad_op);
-	opcion = menu_obtener(menu, &clave2);
-	pa2m_afirmar(menu_ejecutar(opcion, menu) == menu_cantidad(menu),
+	menu_agregar(menu, &clave, texto2, cantidad_op);
+	pa2m_afirmar(menu_ejecutar_operacion(menu, &clave, menu) == menu_cantidad(menu),
 		     "Se puede ejecutar una operacion modificada");
 
 	menu_destruir(menu);
@@ -222,11 +177,8 @@ void pruebas_de_operaciones_del_tda_menu()
 	pa2m_nuevo_grupo("PRUEBAS DE AGREGAR OPERACION Y DESTRUIR MENU");
 	pruebas_agregar_y_destruir();
 
-	pa2m_nuevo_grupo("PRUEBAS DE BUSCAR OPERACIONES DEL MENU");
-	pruebas_buscar_operaciones_por_clave();
-
-	pa2m_nuevo_grupo("PRUEBAS DE EJECUTAR LA OPERACION RECIBIDA");
-	pruebas_ejecutar_operaciones();
+	pa2m_nuevo_grupo("PRUEBAS DE BUSCAR Y EJECUTAR UNA OPERACION");
+	pruebas_obtener_y_ejecutar_operaciones();
 
 	pa2m_nuevo_grupo("PRUEBAS DEL ITERADOR INTERNO");
 	pruebas_menu_iterador_interno();
@@ -284,17 +236,14 @@ void pruebas_del_tda_menu_con_parametros_nulos()
 	pa2m_afirmar(!menu_agregar(menu, &clave, texto, NULL),
 		     "No se puede agregar una operacion invalida a un menu");
 
-	pa2m_afirmar(!menu_obtener(NULL, &clave),
+	//REVISAR MENSAJE
+	pa2m_afirmar(menu_ejecutar_operacion(NULL, &clave, NULL) == -1,
 		     "No se puede obtener una operacion de un menu invalido");
 
-	pa2m_afirmar(!menu_obtener(menu, NULL),
+	pa2m_afirmar(menu_ejecutar_operacion(menu, NULL, NULL) == -1,
 		     "No se puede obtener una operacion con clave invalida");
 
-	pa2m_afirmar(menu_ejecutar(NULL, NULL) == -1,
-		     "No se puede ejecutar una operacion invalida");
-
-	pa2m_afirmar(
-		!menu_cantidad(NULL),
+	pa2m_afirmar(!menu_cantidad(NULL),
 		"No se puede obtener la cantidad de operaciones de un menu invalido");
 
 	pa2m_afirmar(!menu_obtener_contenido(NULL),

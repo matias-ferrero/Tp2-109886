@@ -94,17 +94,21 @@ menu_t *menu_agregar(menu_t *menu, char *palabra_clave, char *texto,
 	return menu;
 }
 
-opcion_t *menu_obtener(menu_t *menu, char *palabra_clave)
+int menu_ejecutar_operacion(menu_t *menu, char *palabra_clave, void *dato)
 {
 	if (!menu || !palabra_clave || !menu_cantidad(menu))
-		return NULL;
+		return ERROR;
 
 	char clave[MAX_CLAVE];
 	memset(clave, 0, MAX_CLAVE);
 	for (int i = 0; i < strlen(palabra_clave); i++)
 		clave[i] = (char)toupper(palabra_clave[i]);
 
-	return hash_obtener(menu->opciones, clave);
+	opcion_t * opcion = hash_obtener(menu->opciones, clave);
+	if (!opcion)
+		return ERROR;
+
+	return opcion->operacion(dato);
 }
 
 char *obtener_informacion(opcion_t *opcion)
@@ -113,14 +117,6 @@ char *obtener_informacion(opcion_t *opcion)
 		return NULL;
 
 	return opcion->informacion;
-}
-
-int menu_ejecutar(opcion_t *operacion, void *dato)
-{
-	if (!operacion || !operacion->operacion)
-		return ERROR;
-
-	return operacion->operacion(dato);
 }
 
 size_t menu_cantidad(menu_t *menu)

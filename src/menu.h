@@ -66,23 +66,19 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
  * que no exista la operacion en el menu (o en caso de error).
  * 
  * La funcion se encarga de transformar en mayusculas la clave recibida.
- */
-opcion_t *menu_obtener(menu_t *menu, char *clave);
-
-/**
- * Recibe una operacion y devuelve el texto informativo asociado, o NULL
- * en caso de error.
- */
-char *obtener_informacion(opcion_t *operacion);
-
-/**
  * Recibe una operacion y ejecuta su funcion asociada, con el dato que se pasa
  * por parametro.
  * 
  * Devuelve el resultado que devuelve la funcion de la operacion recibida,
  * o -1 en caso de error.
  */
-int menu_ejecutar(opcion_t *operacion, void *dato);
+int menu_ejecutar_operacion(menu_t *menu, char *clave, void *dato);
+
+/**
+ * Recibe una operacion y devuelve el texto informativo asociado, o NULL
+ * en caso de error.
+ */
+char *obtener_informacion(opcion_t *operacion);
 
 /**
  * Devuelve la cantidad de operaciones almacenadas en el menu o 0 en
