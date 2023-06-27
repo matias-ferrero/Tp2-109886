@@ -77,7 +77,9 @@ menu_t *menu_agregar(menu_t *menu, char *palabra_clave, char *texto,
 
 	opcion_t *actual = hash_obtener(menu->opciones, clave);
 	if (actual != NULL) {
-		strcpy(actual->informacion, texto);
+		if (strcmp(actual->informacion, texto) != 0)
+			strcpy(actual->informacion, texto);
+
 		actual->operacion = funcion;
 		return menu;
 	}

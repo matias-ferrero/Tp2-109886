@@ -95,7 +95,8 @@ void pruebas_agregar_y_destruir()
 		menu_cantidad(menu) == 3,
 		"Se agregaron 3 operaciones y la cantidad de operaciones es 3");
 
-	pa2m_afirmar(menu_agregar(menu, &clave2, "Texto de prueba 2", cantidad_op) != NULL,
+	pa2m_afirmar(menu_agregar(menu, &clave2, "Texto de prueba 2",
+				  cantidad_op) != NULL,
 		     "Se puede modificar una operacion");
 
 	pa2m_afirmar(
@@ -136,7 +137,7 @@ void pruebas_buscar_operaciones_por_clave()
 		     "Se puede obtener la informacion de una operacion");
 
 	pa2m_afirmar(
-		menu_obtener(menu, clave3) != NULL,
+		menu_obtener(menu, "clave") != NULL,
 		"Se puede obtener la misma operacion con una clave sinonimo");
 
 	menu_agregar(menu, &clave2, texto2, cantidad_op);
@@ -228,7 +229,7 @@ void pruebas_de_operaciones_del_tda_menu()
 	pruebas_ejecutar_operaciones();
 
 	pa2m_nuevo_grupo("PRUEBAS DEL ITERADOR INTERNO");
-	//pruebas_menu_iterador_interno();
+	pruebas_menu_iterador_interno();
 }
 
 /*
