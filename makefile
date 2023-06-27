@@ -20,7 +20,7 @@ pruebas_alumno: src/*.c pruebas_alumno.c
 valgrind-tp2: tp2
 	valgrind $(VALGRIND_FLAGS) ./tp2
 
-ejemplo-tp2: src/*.c tp2.c
+tp2: src/*.c tp2.c
 	$(CC) $(CFLAGS) src/*.c tp2.c -o tp2
 
 clean:

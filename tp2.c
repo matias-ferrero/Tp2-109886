@@ -1,4 +1,9 @@
 #include "tp2.h"
+#include "src/menu.h"
+#include "src/tp1.h"
+#include "src/hash.h"
+#include "src/lista.h"
+#include "src/pokemon.h"
 
 #define TERMINAR -2
 #define MAX_CLAVE 25

@@ -1,6 +1,10 @@
 #include "pa2m.h"
 #include "tp2.h"
 #include "src/menu.h"
+#include "src/tp1.h"
+#include "src/hash.h"
+#include "src/lista.h"
+#include "src/pokemon.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -75,9 +79,7 @@ void pruebas_agregar_y_destruir()
 	menu_t *menu = menu_crear(NULL);
 	char clave1 = 'A';
 	char clave2 = 'b';
-	char clave3[] = "clAvE";
-	char texto1[MAX_TEXTO] = "Texto de prueba";
-	char texto2[MAX_TEXTO] = "Texto de prueba 2";
+	char texto1[] = "Texto de prueba";
 
 	pa2m_afirmar(menu_agregar(menu, &clave1, texto1, cantidad_op) != NULL,
 		     "Se pueden agregar operaciones al menu");
@@ -86,14 +88,14 @@ void pruebas_agregar_y_destruir()
 		     "Se puede agregar una operacion con clave no mayuscula");
 
 	pa2m_afirmar(
-		menu_agregar(menu, clave3, texto1, cantidad_op) != NULL,
+		menu_agregar(menu, "clAvE", texto1, cantidad_op) != NULL,
 		"Se puede agregar la misma operacion con una clave sinonimo");
 
 	pa2m_afirmar(
 		menu_cantidad(menu) == 3,
 		"Se agregaron 3 operaciones y la cantidad de operaciones es 3");
 
-	pa2m_afirmar(menu_agregar(menu, &clave2, texto2, cantidad_op) != NULL,
+	pa2m_afirmar(menu_agregar(menu, &clave2, "Texto de prueba 2", cantidad_op) != NULL,
 		     "Se puede modificar una operacion");
 
 	pa2m_afirmar(

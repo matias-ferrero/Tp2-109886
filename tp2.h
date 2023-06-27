@@ -1,12 +1,6 @@
 #ifndef TP2_H_
 #define TP2_H_
 
-#include "src/menu.h"
-#include "src/tp1.h"
-#include "src/hash.h"
-#include "src/lista.h"
-#include "src/pokemon.h"
-
 /**
  * Pide un archivo y un numero de identificacion para cargar un hospital al
  * menu. Crea el hospital con los pokemones del archivo y lo inserta en la

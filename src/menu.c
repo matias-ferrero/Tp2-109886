@@ -3,6 +3,7 @@
 
 #define ERROR -1
 #define CAPACIDAD_MENU 15
+#define MAX_CLAVE 50
 
 struct opcion {
 	menu_operacion_t operacion;
@@ -63,14 +64,16 @@ opcion_t *crear_opcion(char *texto, menu_operacion_t funcion)
 	return opcion;
 }
 
-menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
+menu_t *menu_agregar(menu_t *menu, char *palabra_clave, char *texto,
 		     menu_operacion_t funcion)
 {
-	if (!menu || !clave || !texto || !funcion)
+	if (!menu || !palabra_clave || !texto || !funcion)
 		return NULL;
 
-	for (size_t i = 0; i < strlen(clave); i++)
-		clave[i] = (char)toupper(clave[i]);
+	char clave[MAX_CLAVE];
+	memset(clave, 0, MAX_CLAVE);
+	for (size_t i = 0; i < strlen(palabra_clave); i++)
+		clave[i] = (char)toupper(palabra_clave[i]);
 
 	opcion_t *actual = hash_obtener(menu->opciones, clave);
 	if (actual != NULL) {
@@ -89,13 +92,15 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 	return menu;
 }
 
-opcion_t *menu_obtener(menu_t *menu, char *clave)
+opcion_t *menu_obtener(menu_t *menu, char *palabra_clave)
 {
-	if (!menu || !clave || !menu_cantidad(menu))
+	if (!menu || !palabra_clave || !menu_cantidad(menu))
 		return NULL;
 
-	for (int i = 0; i < strlen(clave); i++)
-		clave[i] = (char)toupper(clave[i]);
+	char clave[MAX_CLAVE];
+	memset(clave, 0, MAX_CLAVE);
+	for (int i = 0; i < strlen(palabra_clave); i++)
+		clave[i] = (char)toupper(palabra_clave[i]);
 
 	return hash_obtener(menu->opciones, clave);
 }
