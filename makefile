@@ -17,6 +17,11 @@ valgrind-alumno: pruebas_alumno
 pruebas_alumno: src/*.c pruebas_alumno.c
 	$(CC) $(CFLAGS) src/*.c pruebas_alumno.c -o pruebas_alumno
 
+valgrind-tp2: tp2
+	valgrind $(VALGRIND_FLAGS) ./tp2
+
+ejemplo-tp2: src/*.c tp2.c
+	$(CC) $(CFLAGS) src/*.c tp2.c -o tp2
 
 clean:
-	rm -f pruebas_alumno pruebas_chanutron
+	rm -f pruebas_alumno pruebas_chanutron tp2

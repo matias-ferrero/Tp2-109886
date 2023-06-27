@@ -57,6 +57,16 @@ Explicado como funciona el TDA Menú, el programa usa este TDA para guardar los 
 <img  width="70%"  src="img/diagrama_estructura_tp2.jpg">
 </div>
 
+Las operaciones que se van a guardar en el Menú, y que se van a poder ejecutar son:
+- Cargar archivo: Pide un archivo y un ID para crear el hospital y lo inserta en la lista del Menú (operación   O(n) por el realloc al crear el hospital).
+- Activar hospital: Pide el ID de un hospital, y recorre los n hospitales hasta encontrar el pedido, lo activa, y si hay un hospital previamente activo, lo busca y lo desactiva (operación O(n), tanto buscar el hospital con ID correcto en la lista, como buscar el hospital previamente activo en la lista, ambas son operaciones O(n)).
+- Mostrar hospitales: Muestra por pantalla los n hospitales insertados en la lista (operación O(n)).
+- Destruir hospital: Busca y destruye el hospital activo (buscar y destruir un elemento en una posición de la lista son operaciones O(n)).
+- Mostrar pokemones: Busca el hospital activo y muestra por pantalla los nombres de sus pokemones (buscar un elemento en la lista es una operación O(n)).
+- Mostrar pokemones detallados: Busca el hospital activo y muestra por pantalla sus pokemones detalladamente (buscar un elemento en la lista es una operación O(n)).
+- Mostrar operaciones: Recorre las n operaciones insertadas y las muestra por pantalla (es una operación O(n), pero como para este programa solo se agregan 8 operaciones, se podría considerar que la complejidad es O(8)).
+- Salir: Libera la memoria del Menú y sale del programa (destruir una lista con sus n hospitales es una operación O(n)).
+
 ## Respuestas a las preguntas teóricas
 
 Para la implementación del TP2, se carga el TDA Menú con los hospitales creados en el TP1. Estos hospitales están implementados con un `vector dinámico` de pokemones y dos números que guardan la cantidad de pokemones y entrenadores que hay en el hospital. 

@@ -1,4 +1,3 @@
-#include "src/menu.h"
 #include "tp2.h"
 
 #define TERMINAR -2
@@ -23,8 +22,8 @@ int buscar_hospital_activo(void *elemento, void *pos)
 	if (nodo->activo)
 		return 0;
 
-	*(posicion++);
-	return -1;
+	*posicion = *posicion + 1;
+	return (int)*posicion;
 }
 
 /**
@@ -81,7 +80,7 @@ int comparador(void *elemento, void *aux)
 	size_t *id = (size_t *)aux;
 	nodo_menu_t *nodo = (nodo_menu_t *)elemento;
 
-	return *id - nodo->id;
+	return (int)(*id - nodo->id);
 }
 
 bool desactivar_hospital(void *elemento, void *aux)
@@ -184,14 +183,13 @@ int destruir_hospital(void *menu1)
  * ----------------------------------------------------------------------------
  */
 
-bool mostrar_pokemon(void *elemento, void *contador)
+bool mostrar_pokemon(pokemon_t *pokemon, void *contador)
 {
-	if (!elemento || !contador)
+	if (!pokemon || !contador)
 		return false;
 
 	size_t *numero = contador;
-	*(numero++);
-	pokemon_t *pokemon = (pokemon_t *)elemento;
+	*numero = *numero + 1;
 	printf("%zu) %s\n", *numero, pokemon_nombre(pokemon));
 	return true;
 }
@@ -220,15 +218,14 @@ int mostrar_pokemones(void *menu1)
  * ----------------------------------------------------------------------------
  */
 
-bool mostrar_pokemon_detallado(void *elemento, void *contador)
+bool mostrar_pokemon_detallado(pokemon_t *pokemon, void *contador)
 {
-	if (!elemento || !contador)
+	if (!pokemon || !contador)
 		return false;
 
 	size_t *numero = contador;
-	*(contador++);
-	pokemon_t *pokemon = (pokemon_t *)elemento;
-	printf("%zu) %s - Id: N°%zu - Salud: %zu - Entrenador: %zu\n", *numero,
+	*numero = *numero + 1;
+	printf("%zu) %s - Id: N°%zu - Salud: %zu - Entrenador: %s\n", *numero,
 	       pokemon_nombre(pokemon), pokemon_id(pokemon),
 	       pokemon_salud(pokemon), pokemon_entrenador(pokemon));
 
@@ -318,6 +315,7 @@ bool comparar_claves(const char *clave, void *op, void *aux)
 
 	if (clave[0] == palabra[0]) {
 		printf("Quisiste decir la operacion %c?\n", *clave);
+		printf("%c: %s", *clave, obtener_informacion(opcion));
 		return false;
 	}
 
@@ -366,35 +364,51 @@ int main()
 		return -1;
 	}
 
-	menu_agregar(menu, "C", "Cargar un hospital", cargar_hospital);
-	menu_agregar(menu, "cargar", "Cargar un hospital", cargar_hospital);
+	menu_agregar(menu, "C",
+		"Cargar un hospital: Pide un archivo y un ID, y crea el hospital",
+		 cargar_hospital);
+	menu_agregar(menu, "cargar",
+		"Cargar un hospital: Pide un archivo y un ID, y crea el hospital",
+		 cargar_hospital);
 
-	menu_agregar(menu, "A", "Activar un hospital", activar_hospital);
-	menu_agregar(menu, "activar", "Activar un hospital", activar_hospital);
+	menu_agregar(menu, "A",
+		     "Activar un hospital: Pide un ID, y activa un hospital",
+		      activar_hospital);
+	menu_agregar(menu, "activar",
+		     "Activar un hospital: Pide un ID, y activa un hospital",
+		      activar_hospital);
 
-	menu_agregar(menu, "E", "Mostrar los hospitales", mostrar_hospitales);
-	menu_agregar(menu, "estado", "Mostrar los hospitales",
-		     mostrar_hospitales);
+	menu_agregar(menu, "E",
+		"Mostrar los hospitales: Muestra por pantalla los hospitales cargados",
+	 	mostrar_hospitales);
+	menu_agregar(menu, "estado",
+		"Mostrar los hospitales: Muestra por pantalla los hospitales cargados",
+	 	mostrar_hospitales);
 
-	menu_agregar(menu, "D", "Destruir hospital activo", destruir_hospital);
-	menu_agregar(menu, "destruir", "Destruir hospital activo",
-		     destruir_hospital);
+	menu_agregar(menu, "D", "Destruir hospital activo y sus pokemones",
+		destruir_hospital);
+	menu_agregar(menu, "destruir", 
+		"Destruir hospital activo y sus pokemones", destruir_hospital);
 
-	menu_agregar(menu, "M", "Mostrar los pokemones de un hospital",
+	menu_agregar(menu, "M", "Mostrar los pokemones del hospital activo",
 		     mostrar_pokemones);
-	menu_agregar(menu, "mostrar", "Mostrar los pokemones de un hospital",
+	menu_agregar(menu, "mostrar",
+		     "Mostrar los pokemones del hospital activo",
 		     mostrar_pokemones);
 
 	menu_agregar(menu, "L",
-		     "Mostrar los pokemones detallados de un hospital",
+		     "Mostrar los pokemones detallados del hospital activo",
 		     mostrar_pokemones_detallados);
 	menu_agregar(menu, "listar",
-		     "Mostrar los pokemones detallados de un hospital",
+		     "Mostrar los pokemones detallados del hospital activo",
 		     mostrar_pokemones_detallados);
 
-	menu_agregar(menu, "H", "Mostrar los comandos", menu_mostrar);
-	menu_agregar(menu, "ayuda", "Mostrar los comandos", menu_mostrar);
-	menu_agregar(menu, "help", "Mostrar los comandos", menu_mostrar);
+	menu_agregar(menu, "H", "Mostrar los comandos disponibles",
+		     menu_mostrar);
+	menu_agregar(menu, "ayuda", "Mostrar los comandos disponibles",
+		     menu_mostrar);
+	menu_agregar(menu, "help", "Mostrar los comandos disponibles",
+		     menu_mostrar);
 
 	menu_agregar(menu, "S", "Salir del menu", menu_salir);
 	menu_agregar(menu, "salir", "Salir del menu", menu_salir);
