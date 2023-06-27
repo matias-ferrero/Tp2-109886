@@ -89,14 +89,6 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 	return menu;
 }
 
-size_t menu_cantidad(menu_t *menu)
-{
-	if (!menu)
-		return 0;
-
-	return hash_cantidad(menu->opciones);
-}
-
 opcion_t *menu_obtener(menu_t *menu, char *clave)
 {
 	if (!menu || !clave || !menu_cantidad(menu))
@@ -122,6 +114,14 @@ int menu_ejecutar(opcion_t *operacion, void *dato)
 		return ERROR;
 
 	return operacion->operacion(dato);
+}
+
+size_t menu_cantidad(menu_t *menu)
+{
+	if (!menu)
+		return 0;
+
+	return hash_cantidad(menu->opciones);
 }
 
 size_t menu_con_cada_operacion(menu_t *menu,

@@ -13,7 +13,7 @@ typedef struct menu menu_t;
 
 /**
  * La funcion a ejecutar asociada a una operacion.
- * Recibe un menu y no devuelve nada.
+ * Recibe un void* por parametro y devuelve un entero.
  */
 typedef int (*menu_operacion_t)(void *);
 
@@ -62,12 +62,6 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 		     menu_operacion_t funcion);
 
 /**
- * Devuelve la cantidad de operaciones almacenadas en el menu o 0 en
- * caso de error.
- */
-size_t menu_cantidad(menu_t *menu);
-
-/**
  * Busca y devuelve la operacion asociada a la clave dada, o NULL en caso de
  * que no exista la operacion en el menu (o en caso de error).
  * 
@@ -89,6 +83,12 @@ char *obtener_informacion(opcion_t *operacion);
  * o -1 en caso de error.
  */
 int menu_ejecutar(opcion_t *operacion, void *dato);
+
+/**
+ * Devuelve la cantidad de operaciones almacenadas en el menu o 0 en
+ * caso de error.
+ */
+size_t menu_cantidad(menu_t *menu);
 
 /**
  * Recorre el menu e invoca la funcion con cada operacion guardada en el menu,
