@@ -33,6 +33,16 @@ int buscar_hospital_activo(void *elemento, void *pos)
 	return (int)*posicion;
 }
 
+void destruir_nodo(void *elemento)
+{
+	if (!elemento)
+		return;
+
+	nodo_menu_t *nodo = (nodo_menu_t *)elemento;
+	hospital_destruir(nodo->hospital);
+	free(nodo);
+}
+
 /**
  * ----------------------------------------------------------------------------
  */
@@ -65,7 +75,11 @@ int cargar_hospital(void *menu1)
 
 	size_t id;
 	printf("Ingrese el id del hospital\n");
-	scanf("%zu", &id);
+	if (!scanf("%zu", &id)) {
+		printf("Numero de ID invalido\n");
+		destruir_nodo(nodo);
+		return ERROR;
+	}
 
 	nodo->id = id;
 	nodo->activo = false;
@@ -83,12 +97,12 @@ int cargar_hospital(void *menu1)
  * ----------------------------------------------------------------------------
  */
 
-int comparador(void *elemento, void *aux)
+int comparador_id(void *elemento, void *numero)
 {
-	if (!elemento || !aux)
+	if (!elemento || !numero)
 		return -1;
 
-	size_t *id = (size_t *)aux;
+	size_t *id = (size_t *)numero;
 	nodo_menu_t *nodo = (nodo_menu_t *)elemento;
 
 	return (int)(*id - nodo->id);
@@ -118,10 +132,13 @@ int activar_hospital(void *menu1)
 
 	size_t id;
 	printf("Ingrese el id del hospital que quiere activar\n");
-	scanf("%zu", &id);
+	if (!scanf("%zu", &id)) {
+		printf("Numero de ID invalido\n");
+		return ERROR;
+	}
 
 	lista_t *lista = menu_obtener_contenido(menu);
-	nodo_menu_t *nodo = lista_buscar_elemento(lista, comparador, &id);
+	nodo_menu_t *nodo = lista_buscar_elemento(lista, comparador_id, &id);
 	if (!nodo) {
 		printf("No se encontro el hospital con id N°%zu\n", id);
 		return ERROR;
@@ -187,8 +204,7 @@ int destruir_hospital(void *menu1)
 		return ERROR;
 	}
 
-	hospital_destruir(nodo->hospital);
-	free(nodo);
+	destruir_nodo(nodo);
 	lista_quitar_de_posicion(lista, posicion);
 	return EXITO;
 }
@@ -256,8 +272,10 @@ int mostrar_pokemones_detallados(void *menu1)
 	lista_t *lista = menu_obtener_contenido(menu);
 	nodo_menu_t *nodo;
 	nodo = lista_buscar_elemento(lista, buscar_hospital_activo, &contador);
-	if (!nodo)
+	if (!nodo) {
+		printf("Error al buscar un Hospital activo\n");
 		return ERROR;
+	}
 
 	contador = 0;
 	hospital_a_cada_pokemon(nodo->hospital, mostrar_pokemon_detallado,
@@ -269,14 +287,45 @@ int mostrar_pokemones_detallados(void *menu1)
  * ----------------------------------------------------------------------------
  */
 
+bool opcion_valida(const char *nombre)
+{
+	if (!strcmp(nombre, "A"))
+		return true;
+
+	if (!strcmp(nombre, "C"))
+		return true;
+
+	if (!strcmp(nombre, "D"))
+		return true;
+
+	if (!strcmp(nombre, "E"))
+		return true;
+
+	if (!strcmp(nombre, "H"))
+		return true;
+
+	if (!strcmp(nombre, "L"))
+		return true;
+
+	if (!strcmp(nombre, "M"))
+		return true;
+
+	if (!strcmp(nombre, "S"))
+		return true;
+
+	return false;
+}
+
 bool mostrar_opcion(const char *nombre, void *op, void *aux)
 {
 	aux = aux;
 	if (!nombre || !op)
 		return false;
 
-	opcion_t *opcion = op;
-	printf("%s: %s\n", nombre, obtener_informacion(opcion));
+	if (opcion_valida(nombre)) {
+		opcion_t *opcion = op;
+		printf("%s: %s\n", nombre, obtener_informacion(opcion));
+	}
 	return true;
 }
 
@@ -285,8 +334,10 @@ int menu_mostrar(void *menu)
 	if (!menu)
 		return TERMINAR;
 
-	if (!menu_con_cada_operacion((menu_t *)menu, mostrar_opcion, NULL))
+	if (!menu_con_cada_operacion((menu_t *)menu, mostrar_opcion, NULL)) {
+		printf("No hay operaciones para mostrar\n");
 		return ERROR;
+	}
 
 	return EXITO;
 }
@@ -294,16 +345,6 @@ int menu_mostrar(void *menu)
 /**
  * ----------------------------------------------------------------------------
  */
-
-void destruir_nodo(void *n)
-{
-	if (!n)
-		return;
-
-	nodo_menu_t *nodo = (nodo_menu_t *)n;
-	hospital_destruir(nodo->hospital);
-	free(nodo);
-}
 
 void destruir_lista(void *lista)
 {
@@ -327,7 +368,7 @@ int menu_salir(void *menu1)
  * ----------------------------------------------------------------------------
  */
 
-bool menu_interactuar(menu_t *menu)
+bool interactuar_con_menu(menu_t *menu)
 {
 	if (!menu)
 		return true;
@@ -409,11 +450,8 @@ int main()
 
 	bool salir = false;
 	while (!salir) {
-		salir = menu_interactuar(menu);
+		salir = interactuar_con_menu(menu);
 		printf("\n");
 	}
-
-	//menu_salir(menu);
-
 	return 0;
 }

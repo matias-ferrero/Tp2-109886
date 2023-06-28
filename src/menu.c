@@ -3,7 +3,7 @@
 
 #define ERROR -1
 #define CAPACIDAD_MENU 15
-#define MAX_CLAVE 50
+#define MAX_NOMBRE 50
 
 struct opcion {
 	menu_operacion_t operacion;
@@ -64,18 +64,18 @@ opcion_t *crear_opcion(char *texto, menu_operacion_t funcion)
 	return opcion;
 }
 
-menu_t *menu_agregar(menu_t *menu, char *palabra_clave, char *texto,
+menu_t *menu_agregar(menu_t *menu, char *nombre_clave, char *texto,
 		     menu_operacion_t funcion)
 {
-	if (!menu || !palabra_clave || !texto || !funcion)
+	if (!menu || !nombre_clave || !texto || !funcion)
 		return NULL;
 
-	char clave[MAX_CLAVE];
-	memset(clave, 0, MAX_CLAVE);
-	for (size_t i = 0; i < strlen(palabra_clave); i++)
-		clave[i] = (char)toupper(palabra_clave[i]);
+	char nombre[MAX_NOMBRE];
+	memset(nombre, 0, MAX_NOMBRE);
+	for (size_t i = 0; i < strlen(nombre_clave); i++)
+		nombre[i] = (char)toupper(nombre_clave[i]);
 
-	opcion_t *actual = hash_obtener(menu->opciones, clave);
+	opcion_t *actual = hash_obtener(menu->opciones, nombre);
 	if (actual != NULL) {
 		actual->informacion = texto;
 		actual->operacion = funcion;
@@ -86,23 +86,23 @@ menu_t *menu_agregar(menu_t *menu, char *palabra_clave, char *texto,
 	if (!opcion)
 		return NULL;
 
-	if (!hash_insertar(menu->opciones, clave, opcion, NULL))
+	if (!hash_insertar(menu->opciones, nombre, opcion, NULL))
 		return NULL;
 
 	return menu;
 }
 
-int menu_ejecutar_operacion(menu_t *menu, char *palabra_clave, void *dato)
+int menu_ejecutar_operacion(menu_t *menu, char *nombre_clave, void *dato)
 {
-	if (!menu || !palabra_clave || !menu_cantidad(menu))
+	if (!menu || !nombre_clave || !menu_cantidad(menu))
 		return ERROR;
 
-	char clave[MAX_CLAVE];
-	memset(clave, 0, MAX_CLAVE);
-	for (int i = 0; i < strlen(palabra_clave); i++)
-		clave[i] = (char)toupper(palabra_clave[i]);
+	char nombre[MAX_NOMBRE];
+	memset(nombre, 0, MAX_NOMBRE);
+	for (int i = 0; i < strlen(nombre_clave); i++)
+		nombre[i] = (char)toupper(nombre_clave[i]);
 
-	opcion_t * opcion = hash_obtener(menu->opciones, clave);
+	opcion_t *opcion = hash_obtener(menu->opciones, nombre);
 	if (!opcion)
 		return ERROR;
 
@@ -126,7 +126,7 @@ size_t menu_cantidad(menu_t *menu)
 }
 
 size_t menu_con_cada_operacion(menu_t *menu,
-			       bool (*f)(const char *clave, void *op,
+			       bool (*f)(const char *nombre, void *opcion,
 					 void *aux),
 			       void *aux)
 {
@@ -136,12 +136,12 @@ size_t menu_con_cada_operacion(menu_t *menu,
 	return hash_con_cada_clave(menu->opciones, f, aux);
 }
 
-void destruir_opcion(void *op)
+void destruir_opcion(void *opcion)
 {
-	if (!op)
+	if (!opcion)
 		return;
 
-	free(op);
+	free(opcion);
 }
 
 void menu_destruir(menu_t *menu)
@@ -149,7 +149,7 @@ void menu_destruir(menu_t *menu)
 	menu_destruir_todo(menu, NULL);
 }
 
-void menu_destruir_todo(menu_t *menu, void (*destruir)(void *))
+void menu_destruir_todo(menu_t *menu, void (*destruir)(void *contenido))
 {
 	if (!menu)
 		return;

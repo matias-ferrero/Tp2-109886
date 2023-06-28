@@ -12,8 +12,8 @@ typedef struct opcion opcion_t;
 typedef struct menu menu_t;
 
 /**
- * La funcion a ejecutar asociada a una operacion.
- * Recibe un void* por parametro y devuelve un entero.
+ * La función a ejecutar asociada a una operación.
+ * Recibe un void* por parámetro y devuelve un entero.
  */
 typedef int (*menu_operacion_t)(void *);
 
@@ -25,52 +25,50 @@ typedef int (*menu_operacion_t)(void *);
 menu_t *menu_crear(void *contenido);
 
 /**
- * Devuelve el contenido almacenado en el menu, o NULL si no exite
+ * Devuelve el contenido almacenado en el menú, o NULL si no existe
  * (o en caso de error).
  */
 void *menu_obtener_contenido(menu_t *menu);
 
 /**
- * Intercambia el contenido almacenado en el menu por el nuevo contenido
- * pasado por parametro.
- * 
- * La funcion se encarga de destruir el contenido viejo, liberando su memoria
- * con la funcion destructora que se pasa por parametro, en caso de que esta
+ * Intercambia el contenido almacenado en el menú por el nuevo contenido
+ * pasado por parámetro.
+ *
+ * La función se encarga de destruir el contenido viejo, liberando su memoria
+ * con la función destructora que se pasa por parámetro, en caso de que esta
  * no sea NULL.
- * 
- * Devuelve el nuevo contenido almacenado en el menu. 
+ *
+ * Devuelve el nuevo contenido almacenado en el menú.
  */
 void *menu_cambiar_contenido(menu_t *menu, void *nuevo,
 			     void (*destruir)(void *));
 
 /**
- * Agrega o actualiza una operacion en el menú asociado a la clave dada.
- * 
- * Se recibe una funcion, no NULL, que ejecuta la operacion que se desea
- * agregar, un texto informativo que describe la funcion, y una clave que
- * se asocia a esta operacion.
- * 
- * Si la clave ya existía, se reemplaza el texto y la funcion existente,
- * por las recibidas por parametro.
- * 
- * La funcion guarda una copia de la clave recibida en MAYUSCULAS.
- * Todas las claves recibidas se guardan en mayusculas.
- * 
- * Devuelve el menu si pudo guardar la operacion, o NULL en caso de error.
+ * Agrega o actualiza una operación en el menú asociado a la clave dada.
+ *
+ * Se recibe una función, no NULL, que ejecuta la operación que se desea
+ * agregar, un texto informativo que describe la función, y una clave que
+ * se asocia a esta operación.
+ *
+ * Si la clave ya existía, se reemplaza el texto y la función existente,
+ * por las recibidas por parámetro.
+ *
+ * La funcion guarda una copia de la clave recibida en MAYÚSCULAS.
+ * Todas las claves recibidas se guardan en mayúsculas.
+ *
+ * Devuelve el menú si pudo guardar la operación, o NULL en caso de error.
  */
 menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 		     menu_operacion_t funcion);
 
 /**
- * Busca y devuelve la operacion asociada a la clave dada, o NULL en caso de
- * que no exista la operacion en el menu (o en caso de error).
- * 
- * La funcion se encarga de transformar en mayusculas la clave recibida.
- * Recibe una operacion y ejecuta su funcion asociada, con el dato que se pasa
- * por parametro.
- * 
- * Devuelve el resultado que devuelve la funcion de la operacion recibida,
- * o -1 en caso de error.
+ * Busca la operación por el nombre clave dado y ejecuta su función asociada,
+ * con el dato que se pasa por parámetro.
+ *
+ * La funcion se encarga de transformar en mayúsculas la clave recibida.
+ *
+ * Devuelve el resultado que devuelve la funcion de la operación recibida,
+ * o -1 en caso que no exista la operación en el menú (o en caso de error).
  */
 int menu_ejecutar_operacion(menu_t *menu, char *clave, void *dato);
 

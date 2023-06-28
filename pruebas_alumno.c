@@ -122,15 +122,18 @@ void pruebas_obtener_y_ejecutar_operaciones()
 
 	menu_agregar(menu, &clave, texto1, cantidad_op);
 
-	pa2m_afirmar(menu_ejecutar_operacion(menu, "A", menu) == menu_cantidad(menu),
+	pa2m_afirmar(menu_ejecutar_operacion(menu, "A", menu) ==
+			     menu_cantidad(menu),
 		     "Se puede ejecutar la operacion guardada");
 
 	pa2m_afirmar(
-		menu_ejecutar_operacion(menu, &clave, menu) == menu_cantidad(menu),
+		menu_ejecutar_operacion(menu, &clave, menu) ==
+			menu_cantidad(menu),
 		"Se puede ejecutar la operacion guardada con una clave sinonimo");
 
 	menu_agregar(menu, &clave, texto2, cantidad_op);
-	pa2m_afirmar(menu_ejecutar_operacion(menu, &clave, menu) == menu_cantidad(menu),
+	pa2m_afirmar(menu_ejecutar_operacion(menu, &clave, menu) ==
+			     menu_cantidad(menu),
 		     "Se puede ejecutar una operacion modificada");
 
 	menu_destruir(menu);
@@ -243,7 +246,8 @@ void pruebas_del_tda_menu_con_parametros_nulos()
 	pa2m_afirmar(menu_ejecutar_operacion(menu, NULL, NULL) == -1,
 		     "No se puede obtener una operacion con clave invalida");
 
-	pa2m_afirmar(!menu_cantidad(NULL),
+	pa2m_afirmar(
+		!menu_cantidad(NULL),
 		"No se puede obtener la cantidad de operaciones de un menu invalido");
 
 	pa2m_afirmar(!menu_obtener_contenido(NULL),
