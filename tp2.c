@@ -188,6 +188,7 @@ int destruir_hospital(void *menu1)
 	}
 
 	hospital_destruir(nodo->hospital);
+	free(nodo);
 	lista_quitar_de_posicion(lista, posicion);
 	return EXITO;
 }
