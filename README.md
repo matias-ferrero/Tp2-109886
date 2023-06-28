@@ -5,7 +5,7 @@
 - Para compilar y correr el tp2:
 
 ```
-
+make valgrind-tp2
 ```
 
 - Para compilar y correr pruebas del TDA Menu con makefile:
@@ -23,20 +23,20 @@ make valgrind-chanutron
 ##  Funcionamiento
 
 Esta aplicación implementa un programa que, mediante el uso de un TDA Menú, mejora el manejo y permite la interacción del usuario con los hospitales de pokemones implementados en el TP1. El programa recibe los datos necesarios que entrega el usuario (archivos, números de identificaciones, funciones, etc.), y realiza las operaciones creadas.
-Por otro lado, para la implementación del TDA Menú, también se implementa un TDA Opción, que guarda la información de cada operación que se agrega al Menú. Para esto, el TDA Menu usa una tabla de Hash que almacena todas las opciones con sus claves asociadas, en la que cada una guarda la funcion que ejecuta la operacion y un corto texto descriptivo. Por ultimo, cabe destacar que el TDA Menú también guarda un void* que sirve como contenido o contexto del TDA.
+Por otro lado, para la implementación del TDA Menú, también se implementa un TDA Opción, que guarda cada operación que se agrega al Menú. Para esto, el TDA Menú usa una tabla de Hash que almacena todas las opciones con sus nombres asociados; en la que cada Opción guarda una función, que recibe un void* por parámetro y devuelve un entero (para poder determinar estados según la función lo requiera), y además guarda un corto texto descriptivo de dicha función. Por último, cabe destacar que el TDA Menú también guarda un void* que sirve como contenido o contexto.
 
 <div  align="center">
 <img  width="70%"  src="img/diagrama_estructura_menu.jpg">
 </div>
 
-El TDA Menú en la función `menu_agregar` recibe una clave con la función y el texto, y crea la operación que se guarda en el Hash con la clave asociada, o la reemplaza por la operación existente si la clave ya fue ingresada. Para evitar problemas con la búsqueda de las operaciones en el Menú, en caso de escribir la misma clave con mayúsculas, minúsculas, o con ambas, todas las claves que se reciben al guardan una operación se transforman en una letra o palabra toda en mayúsculas con la función `toupper` (de la librería `ctype.h`).
+El TDA Menú en la función `menu_agregar` recibe un nombre con la función y el texto, y crea el TDA Opción que se guarda en el Hash con el nombre asociado, o la reemplaza por la Opción existente si el nombre ya fue ingresado. Para evitar problemas con la búsqueda de las operaciones en el Menú, en caso de escribir el misma nombre con mayúsculas, minúsculas, o con ambas, todas los nombres que se reciben al guardan una operación se transforman en mayúsculas con la función `toupper` (de la librería `ctype.h`).
 
 ```c
-for (size_t  i = 0; i < strlen(clave); i++)
-	clave[i] = (char)toupper(clave[i]);
+for (size_t i = 0; i < strlen(nombre_clave); i++)
+		nombre[i] = (char)toupper(nombre_clave[i]);
 ```
 
-Y así como para guardar operaciones se transforman las claves a mayúsculas, para obtener una operación en `menu_obtener` también se recibe y se cambia la clave, se busca en el Hash, y se devuelve la operación asociada. Una vez obtenida la operación, se recibe en `menu_ejecutar` junto con el parámetro de la función en cuestión, y se devuelve el retorno de dicha función. Y en caso de que se desee, `obtener_informacion` devuelve el texto del TDA Opción. 
+Y así como para guardar operaciones se transforman los nombres a mayúsculas, para obtener y ejecutar una Opción en `menu_ejecutar_operacion` también se recibe y se cambia el nombre, se busca en el Hash, y se ejecuta la operación asociada, con el parámetro recibido de la función en cuestión, y se devuelve el retorno de dicha función. Y en caso de que se desee, `obtener_informacion` devuelve el texto del TDA Opción. 
 Por otro lado,  `menu_obtener_contenido` devuelve el contexto del Menú que guarda el void*, y se puede modificar con `menu_cambiar_contenido`. Por ejemplo, en este apartado se pueden guardar los hospitales del programa.
 
 Analizando la complejidad algorítmica de las funciones del TDA Menú con Big (O) obtenemos que:
@@ -44,9 +44,8 @@ Analizando la complejidad algorítmica de las funciones del TDA Menú con Big (O
 - Obtener contenido: Devuelve lo que guarda el void* del TDA Menú (operación O(1)).
 - Cambiar contenido: Destruye el contenido actual (si es necesario), y lo reemplaza por el nuevo (operación     O(1), pero depende de la complejidad de la función destructora).
 - Agregar operación: Crea el TDA Opción con la función y el texto, y la inserta en el Hash (operación O(n) por la posibilidad de rehash).
-- Obtener operación: Busca en el Hash y devuelve la Opción asociada a la clave (en casos promedio, es una operación O(1), pero se puede deformar en una operación O(n) debido a como funciona el Hash).
+- Ejecutar operación: Busca en el Hash la Opción asociada al nombre. Después, se ejecuta la función del TDA Opción (en casos promedio, es una operación O(1), pero se puede deformar en una operación O(n) debido a como funciona el Hash, aunque al final depende de la complejidad de la función recibida).
 - Obtener información: Devuelve el texto del TDA Opción (operación O(1)).
-- Ejecutar operación: Ejecuta la función del TDA Opción (operación O(1), pero depende de la complejidad de la función recibida).
 - Cantidad de operaciones: Devuelve la cantidad de opciones guardados en la tabla de Hash (operación O(1)).
 - Iterador interno: Itera todas las n operaciones y les aplica una función a cada una (operación O(n), pero depende de la función a invocar).
 - Destruir: Libera la memoria reservada de las n operaciones, y le aplica una función destructora (si es necesario) al contenido guardado en el TDA Menú (operación O(n), pero depende de la complejidad de la función destructora).

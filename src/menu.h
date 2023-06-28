@@ -73,43 +73,43 @@ menu_t *menu_agregar(menu_t *menu, char *clave, char *texto,
 int menu_ejecutar_operacion(menu_t *menu, char *clave, void *dato);
 
 /**
- * Recibe una operacion y devuelve el texto informativo asociado, o NULL
+ * Recibe una operación y devuelve el texto informativo asociado, o NULL
  * en caso de error.
  */
 char *obtener_informacion(opcion_t *operacion);
 
 /**
- * Devuelve la cantidad de operaciones almacenadas en el menu o 0 en
+ * Devuelve la cantidad de operaciones almacenadas en el menú o 0 en
  * caso de error.
  */
 size_t menu_cantidad(menu_t *menu);
 
 /**
- * Recorre el menu e invoca la funcion con cada operacion guardada en el menu,
- * con su clave asociada como primer parametro, la operacion como segundo
- * parametro, y un puntero auxiliar como tercer parametro.
- * 
- * Mientras que queden mas operaciones o la funcion retorne true, la iteración
+ * Recorre el menú e invoca la función con cada operación guardada en el menú,
+ * con su clave asociada como primer parámetro, la operación como segundo
+ * parámetro, y un puntero auxiliar como tercer parámetro.
+ *
+ * Mientras que queden mas operaciones o la función retorne true, la iteración
  * continúa. Cuando no quedan mas operaciones o la función devuelve false, la
  * iteración se corta y la función principal retorna.
- * 
+ *
  * Devuelve la cantidad de operaciones totales iteradas (la cantidad de veces
  * que fue invocada la función) o 0 en caso de error.
  */
 size_t menu_con_cada_operacion(menu_t *menu,
-			       bool (*f)(const char *clave, void *op,
+			       bool (*f)(const char *nombre, void *opcion,
 					 void *aux),
 			       void *aux);
 
 /**
- * Destruye el menu liberando la memoria reservada.
+ * Destruye el menú liberando la memoria reservada.
  */
 void menu_destruir(menu_t *menu);
 
 /**
- * Destruye el menu liberando la memoria reservada y asegurandose de
- * invocar la funcion destructora con el contenido almacenado en el menu.
+ * Destruye el menú liberando la memoria reservada y asegurándose de
+ * invocar la funcion destructora con el contenido almacenado en el menú.
  */
-void menu_destruir_todo(menu_t *menu, void (*f)(void *));
+void menu_destruir_todo(menu_t *menu, void (*f)(void *contenido));
 
 #endif // MENU_H_
