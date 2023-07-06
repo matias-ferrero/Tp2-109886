@@ -1,7 +1,3 @@
-<div align="right">
-<img width="32px" src="img/algo2.svg">
-</div>
-
 ## TP2
 
 Ya estamos cerca del final de la materia. Implementaste el TP1 y varios TDAs. Ahora el objetivo es aplicar todo lo aprendido para mejorar tu TP1.
